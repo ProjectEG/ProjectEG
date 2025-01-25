@@ -6,9 +6,9 @@
 version: '{build}-{branch}'
 
 
-#init:
-#  # Enable Remotedesktop and pause the build execution
-#  - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
+init:
+  # Enable Remotedesktop and pause the build execution
+  - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
 
 
 environment:
@@ -81,15 +81,15 @@ install:
         "    Done."
         " "
         " --- "
-        Start-Process python.exe -Arg "--version"-NoNewWindow  -Wait
+        Start-Process python.exe -Arg "--version" -NoNewWindow -Wait
         Start-Process python.exe -Arg "-m pip --version" -NoNewWindow -Wait
         Start-Process python.exe -Arg "-m pip list" -NoNewWindow -Wait
         "---"
         " "
         "--- pip 20.3.4"
         "    Updating..."
-        python.exe -m ensurepip --upgrade
-        python.exe -m pip install --no-cache-dir -q -U "pip==20.3.4"
+        Start-Process python.exe -Arg "-m ensurepip --upgrade" -NoNewWindow -Wait
+        Start-Process python.exe -Arg '-m pip install --no-cache-dir -q -U "pip==20.3.4" ' -NoNewWindow -Wait
         "    Done."
         " "
         " --- "
