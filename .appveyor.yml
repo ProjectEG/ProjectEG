@@ -71,7 +71,7 @@ install:
           " "
           "--- " + $msg
           "    Installing..."
-          $cmmd = "-m pip install -q --no-python-version-warning " + $mod
+          $cmmd = "-m pip install -q --disable-pip-version-check " + $mod
           PySl $cmmd
           "    Done."
         }
@@ -104,7 +104,7 @@ install:
         "    Updating..."
         $PIP_URL = "https://files.pythonhosted.org/packages/27/79/8a850fe3496446ff0d584327ae44e7500daf6764ca1a382d2d02789accf7/pip-20.3.4-py2.py3-none-any.whl#sha256=217ae5161a0e08c0fb873858806e3478c9775caffce5168b50ec885e358c199d"
         Start-FileDownload $PIP_URL -Timeout 60000
-        PySl '-m pip install --no-python-version-warning -q -U .\pip-20.3.4-py2.py3-none-any.whl'
+        PySl '-m pip install --disable-pip-version-check -q -U .\pip-20.3.4-py2.py3-none-any.whl'
         "    Done."
         " "
         " --- "
@@ -115,7 +115,7 @@ install:
         " "
         "--- setuptools 44.1.1"
         "    Updating..."
-        PySl '-m pip install --no-python-version-warning -q -U "setuptools==44.1.1"'
+        PySl '-m pip install --disable-pip-version-check -q -U "setuptools==44.1.1"'
         "    Done."
         PipInstall "wheel 0.37.1" "wheel==0.37.1"
         PipInstall "sphinx 1.8.6" "sphinx==1.8.6"
@@ -241,9 +241,9 @@ notifications:
   on_build_status_changed: false
 
 
-on_finish:
-  # Enable Remotedesktop and pause the build execution
-  - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
+#on_finish:
+#  # Enable Remotedesktop and pause the build execution
+#  - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
 
 
 # notifications:
