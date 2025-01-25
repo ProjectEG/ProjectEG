@@ -101,12 +101,6 @@ install:
         PySl '-m pip install --disable-pip-version-check -q -U .\pip-20.3.4-py2.py3-none-any.whl'
         "    Done."
         " "
-        " --- "
-        PySl "--version"
-        PySl "-m pip --version"
-        PySl "-m pip list"
-        "---"
-        " "
         "--- setuptools 44.1.1"
         "    Updating..."
         PySl '-m pip install --disable-pip-version-check --no-python-version-warning -q -U "setuptools==44.1.1"'
@@ -235,9 +229,9 @@ notifications:
   on_build_status_changed: false
 
 
-#on_finish:
-#  # Enable Remotedesktop and pause the build execution
-#  - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
+on_finish:
+  # Enable Remotedesktop and pause the build execution
+  - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
 
 
 # notifications:
