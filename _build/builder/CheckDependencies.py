@@ -158,15 +158,19 @@ class ModuleDependency(DependencyBase):
         elif hasattr(module, "version"):
             version = module.version
         else:
-            result = [
-                p.version
-                for p in pip.get_installed_distributions()
-                if str(p).startswith(self.name + " ")
-            ]
+            result = None
+            try:
+                dist = pkg_resources.get_distribution(self.name)
+            except pkg_resources.DistributionNotFound:
+                pass
+            else:
+                if dist.has_version():
+                    result = dist.version
             if result:
-                version = result[0]
+                version = result
             else:
                 raise Exception("Can't get version information")
+
         if not isinstance(version, basestring):
             version = ".".join(str(x) for x in version)
         if CompareVersion(version, self.version) < 0:
