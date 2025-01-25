@@ -59,7 +59,7 @@ install:
           " "
           "--- " + $msg
           "    Installing..."
-          python.exe -m pip install -q $mod
+          python.exe -m pip install -q $mod 2>&1
           "    Done."
         }
         " "
@@ -81,9 +81,9 @@ install:
         "    Done."
         " "
         " --- "
-        python.exe --version
-        python.exe -m pip --version
-        python.exe -m pip list
+        Start-Process python.exe -Arg "--version" -Wait
+        Start-Process python.exe -Arg "-m pip --version" -Wait
+        Start-Process python.exe -Arg "-m pip list" -Wait
         "---"
         " "
         "--- pip 20.3.4"
@@ -93,9 +93,9 @@ install:
         "    Done."
         " "
         " --- "
-        python.exe --version
-        python.exe -m pip --version
-        python.exe -m pip list
+        Start-Process python.exe -Arg "--version" -Wait
+        Start-Process python.exe -Arg "-m pip --version" -Wait
+        Start-Process python.exe -Arg "-m pip list" -Wait
         "---"
         " "
         "--- setuptools 44.1.1"
@@ -170,15 +170,18 @@ install:
 
 
 build:
-  If (-Not (Test-Path(".\EventGhost.exe"))) {
-    Return -1
-  }
-  # off
+  off
   # If we don't turn build off, we get an error from appveyor telling us,
   # we should decide, which project or solution file to use, because the
   # folder contains more than one project or solution file.
   # We don't really "build" (with a compiler), but Appveyor finds the
   # solution files in the extension sub-directories and complains.
+
+
+after_build:
+  If (-Not (Test-Path(".\EventGhost.exe"))) {
+    Return -1
+  }
 
 
 #after_test:
