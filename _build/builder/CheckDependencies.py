@@ -131,10 +131,10 @@ class HtmlHelpWorkshopDependency(DependencyBase):
 
 class InnoSetupDependency(DependencyBase):
     name = "Inno Setup"
-    version = "5.5.8"
+    version = "6.4.0"
     package = "innosetup"
-    #url = "http://www.innosetup.com/isdl.php"
-    url = "http://www.innosetup.com/download.php/is-unicode.exe"
+    # url = "http://www.innosetup.com/isdl.php"
+    url = "https://files.jrsoftware.org/is/6/innosetup-6.4.0.exe"
 
     def Check(self):
         if not GetInnoCompilerPath():
@@ -173,21 +173,21 @@ class ModuleDependency(DependencyBase):
             raise WrongVersion
 
 
-class PyWin32Dependency(DependencyBase):
-    name = "pywin32"
-    version = "220"
-    url = "https://eventghost.github.io/dist/dependencies/pywin32-220-cp27-none-win32.whl"
+# class PyWin32Dependency(DependencyBase):
+#     name = "pywin32"
+#     version = "228"
+#     url = "https://eventghost.github.io/dist/dependencies/pywin32-220-cp27-none-win32.whl"
 
-    def Check(self):
-        versionFilePath = join(
-            sys.prefix, "lib/site-packages/pywin32.version.txt"
-        )
-        try:
-            version = open(versionFilePath, "rt").readline().strip()
-        except IOError:
-            raise MissingDependency
-        if CompareVersion(version, self.version) < 0:
-            raise WrongVersion
+#     def Check(self):
+#         versionFilePath = join(
+#             sys.prefix, "lib/site-packages/pywin32.version.txt"
+#         )
+#         try:
+#             version = open(versionFilePath, "rt").readline().strip()
+#         except IOError:
+#             raise MissingDependency
+#         if CompareVersion(version, self.version) < 0:
+#             raise WrongVersion
 
 
 class StacklessDependency(DependencyBase):
@@ -206,25 +206,25 @@ class StacklessDependency(DependencyBase):
 
 DEPENDENCIES = [
     ModuleDependency(
-        name = "CommonMark",
-        module = "CommonMark",
-        version = "0.7.0",
+        name = "commonmark",
+        module = "commonmark",
+        version = "0.9.1",
     ),
     ModuleDependency(
         name = "comtypes",
         module = "comtypes",
-        version = "1.1.2",
+        version = "1.2.1",
     ),
     ModuleDependency(
-        name = "ctypeslib",
+        name = "ctypeslib3",
         module = "ctypeslib",
-        version = "0.5.6",
-        url = "https://eventghost.github.io/dist/dependencies/ctypeslib-0.5.6-cp27-none-any.whl"
+        version = "0.5.8",
+        # url = "https://eventghost.github.io/dist/dependencies/ctypeslib-0.5.6-cp27-none-any.whl"
     ),
     ModuleDependency(
         name = "future",
         module = "future",
-        version = "0.15.2",
+        version = "1.0.0",
     ),
     #GitDependency(),
     HtmlHelpWorkshopDependency(),
@@ -242,7 +242,7 @@ DEPENDENCIES = [
         name = "Pillow",
         module = "PIL",
         attr = "PILLOW_VERSION",
-        version = "3.1.1",
+        version = "6.2.2",
     ),
     ModuleDependency(
         name = "py2exe_py2",
@@ -250,16 +250,21 @@ DEPENDENCIES = [
         version = "0.6.9",
     ),
     ModuleDependency(
-        name = "PyCrypto",
-        module = "Crypto",
-        version = "2.6.1",
-        url = "https://eventghost.github.io/dist/dependencies/pycrypto-2.6.1-cp27-none-win32.whl",
+        name = "pycryptodome",
+        module = "pycryptodome",
+        version = "3.21.0",
+        # url = "https://eventghost.github.io/dist/dependencies/pycrypto-2.6.1-cp27-none-win32.whl",
     ),
-    PyWin32Dependency(),
+    #PyWin32Dependency(),
+    ModuleDependency(
+        name = "pywin32",
+        module = "pywin32",
+        version = "228",
+    ),
     ModuleDependency(
         name = "Sphinx",
         module = "sphinx",
-        version = "1.3.5",
+        version = "1.8.6",
     ),
     StacklessDependency(),
     ModuleDependency(
