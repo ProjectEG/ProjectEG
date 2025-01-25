@@ -54,20 +54,25 @@ install:
       "=============== prepare EventGhost build environment ==============="
       If (-not (Test-Path $PythonFolder))
       {
+        Function Execute ($command)
+        {
+          $(cmd /c "$command  2>&1")
+        }
+
+        Function PySl ($command)
+        {
+          Execute "$PythonFolder\python.exe $command"
+        }
+        
         Function PipInstall ($msg, $mod)
         {
           " "
           "--- " + $msg
           "    Installing..."
-          $(cmd /c "c:\python.exe -m pip install -q $mod  2>&1")
+          PySl '-m pip install -q $mod'
           "    Done."
         }
 
-        Function Execute ($command)
-        {
-          $(cmd /c "$command  2>&1")
-        }
-        
         " "
         "--- Stackless 2.7.12150 x86"
         $StacklessInstaller = $InstallersFolder + "python-2.7.12150-stackless.msi"
@@ -87,26 +92,26 @@ install:
         "    Done."
         " "
         " --- "
-        Start-Process python.exe -Arg "--version" -NoNewWindow -Wait
-        Start-Process python.exe -Arg "-m pip --version" -NoNewWindow -Wait
-        Start-Process python.exe -Arg "-m pip list" -NoNewWindow -Wait
+        PySl "--version"
+        PySl "-m pip --version"
+        PySl "-m pip list"
         "---"
         " "
         "--- pip 20.3.4"
         "    Updating..."
-        Start-Process python.exe -Arg "-m ensurepip --upgrade" -NoNewWindow -Wait
-        Start-Process python.exe -Arg '-m pip install --no-cache-dir -q -U "pip==20.3.4" ' -NoNewWindow -Wait
+        PySl "-m ensurepip --upgrade"
+        PySl '-m pip install --no-cache-dir -q -U "pip==20.3.4" '
         "    Done."
         " "
         " --- "
-        Start-Process python.exe -Arg "--version" -NoNewWindow -Wait
-        Start-Process python.exe -Arg "-m pip --version" -NoNewWindow -Wait
-        Start-Process python.exe -Arg "-m pip list" -NoNewWindow -Wait
+        PySl "--version"
+        PySl "-m pip --version"
+        PySl "-m pip list"
         "---"
         " "
         "--- setuptools 44.1.1"
         "    Updating..."
-        python.exe -m pip install -q -U "setuptools==44.1.1"
+        PySl '-m pip install -q -U "setuptools==44.1.1"'
         "    Done."
         PipInstall "wheel 0.37.1" "wheel==0.237.1"
         PipInstall "sphinx 1.8.6" "sphinx==1.8.6"
@@ -124,7 +129,7 @@ install:
       " "
       "--- pywin32 post install"
       $PywinPostInstall = $PythonScripts +"\pywin32_postinstall.py"
-      Start-Process python -Arg "$PywinPostInstall -install -silent -quiet" -Wait
+      PySl "$PywinPostInstall -install -silent -quiet"
       "    Done."
       " "
       "--- Inno Setup 6.4.0"
@@ -132,7 +137,7 @@ install:
       $InnoURL = "https://files.innosetup.nl/innosetup-6.4.0.exe"
       Start-FileDownload $InnoURL -Timeout 60000 -FileName $InnoInstaller | ForEach-Object { Write-Host "    " + $_ }
       "    Installing..."
-      Start-Process $InnoInstaller -Arg "/SP /VERYSILENT /SUPPRESSMSGBOXES /NORESTART /RESTARTAPPLICATIONS /NOICONS" -NoNewWindow -Wait
+      Execute "$InnoInstaller /SP /VERYSILENT /SUPPRESSMSGBOXES /NORESTART /RESTARTAPPLICATIONS /NOICONS"
       "    Done."
       " "
       " "
@@ -147,11 +152,11 @@ install:
         git checkout -q master
         $release = $Env:APPVEYOR_REPO_TAG_NAME.split("_", 2)[1]
         $url = if($Env:SFTP_URL){' --docs --url "' + $env:SFTP_URL + '"'} else {''}
-        python "_build\Build.py" --build --package --release --version $release $url
+        PySl "_build\Build.py --build --package --release --version $release $url"
       } Else {
         # WIP
-        python "_build\Build.py" --build --package
-        .\EventGhost.exe -install
+        PySl "_build\Build.py --build --package"
+        Execute ".\EventGhost.exe -install"
       }
       $Env:SetupExe = gci -recurse -filter "_build\output\*Setup.exe" -name
 
