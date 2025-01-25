@@ -22,7 +22,7 @@ matrix:
 
 cache:
   # Invalidate cache if .appveyor.yml has changed
-  - C:\Stackless27 -> .appveyor.yml
+  - C:\stackless27 -> .appveyor.yml
   # Manually clear cache:
   # from agithub.AppVeyor import AppVeyor
   # ci = AppVeyor(<your appveyor API token>)
@@ -39,7 +39,8 @@ install:
 
   #- ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
   - ps: |
-      $PythonFolder = "c:\python27"
+      $Env:PATH = $Env:PATH -replace "python27", "stackless27"
+      $PythonFolder = "c:\stackless27"
       $PythonScripts = $PythonFolder + "\Scripts"
       $SitePackages = $PythonFolder + "\lib\site-packages"
       $SysWOW = $Env:SYSTEMROOT + "\SysWOW64"
@@ -63,7 +64,7 @@ install:
           $cmmd = "$PythonFolder\python.exe " + $command
           Execute "$cmmd"
         }
-        
+
         Function PipInstall ($msg, $mod)
         {
           " "
@@ -78,10 +79,10 @@ install:
         "--- Stackless 2.7.12150 x86"
         $StacklessInstaller = $InstallersFolder + "python-2.7.12150-stackless.msi"
         $StacklessInstallDir = "TARGETDIR=" + $PythonFolder
-        $StacklessURL = "http://www.stackless.com/binaries/python-2.7.12150-stackless.msi"
+        $StacklessURL = "https://www.stackless.com/binaries/python-2.7.12150-stackless.msi"
         Start-FileDownload $StacklessURL -Timeout 60000 -FileName $StacklessInstaller
         "    Installing..."
-        Execute "MsiExec.exe /I $StacklessInstaller /quiet /passive"
+        Execute "MsiExec.exe /I $StacklessInstaller /quiet /passive /norestart /qn TARGETDIR=c:\stackless27"
         "    Done."
         " "
         "--- wxPython 3.0.2.0"
@@ -191,7 +192,7 @@ build:
 
 
 after_build:
-  If (-Not (Test-Path(".\EventGhost.exe"))) 
+  If (-Not (Test-Path(".\EventGhost.exe")))
   {
     "Fehler"
     Return -1
