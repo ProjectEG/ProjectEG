@@ -80,6 +80,9 @@ install:
         Start-Process $WXInstaller -Arg "/VERYSILENT /SUPPRESSMSGBOXES" -NoNewWindow -Wait
         "    Done."
         " "
+        python --version
+        python -m pip --version
+        python -m pip list
         "--- pip 20.3.4"
         "    Updating..."
         python -m pip install --no-cache-dir -q -U "pip==20.3.4"
@@ -144,8 +147,9 @@ install:
 
       # Make sure the appveyor cache is only saved if our build was successfull
       If (-Not (Test-Path(".\EventGhost.exe"))) {
+        "Exe-File not found"
         $env:APPVEYOR_CACHE_SKIP_SAVE = "true"
-      Return -1
+        Return -1
       }
 
       " "
