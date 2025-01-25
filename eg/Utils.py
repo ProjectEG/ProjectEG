@@ -23,7 +23,7 @@ import threading
 import time
 import warnings
 import wx
-from CommonMark import commonmark
+from commonmark import commonmark
 from ctypes import c_ulonglong, windll
 from datetime import datetime as dt, timedelta as td
 from docutils.core import publish_parts as ReSTPublishParts
