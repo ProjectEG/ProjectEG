@@ -59,7 +59,7 @@ install:
           " "
           "--- " + $msg
           "    Installing..."
-          pip install -q $mod
+          python.exe -m pip install -q $mod
           "    Done."
         }
         " "
@@ -81,26 +81,26 @@ install:
         "    Done."
         " "
         " --- "
-        python --version
-        python -m pip --version
-        python -m pip list
+        python.exe --version
+        python.exe -m pip --version
+        python.exe -m pip list
         "---"
         " "
         "--- pip 20.3.4"
         "    Updating..."
-        python -m ensurepip --upgrade
-        python -m pip install --no-cache-dir -q -U "pip==20.3.4"
+        python.exe -m ensurepip --upgrade
+        python.exe -m pip install --no-cache-dir -q -U "pip==20.3.4"
         "    Done."
         " "
         " --- "
-        python --version
-        python -m pip --version
-        python -m pip list
+        python.exe --version
+        python.exe -m pip --version
+        python.exe -m pip list
         "---"
         " "
         "--- setuptools 44.1.1"
         "    Updating..."
-        pip install -q -U "setuptools==44.1.1"
+        python.exe -m pip install -q -U "setuptools==44.1.1"
         "    Done."
         PipInstall "wheel 0.37.1" "wheel==0.237.1"
         PipInstall "sphinx 1.8.6" "sphinx==1.8.6"
@@ -170,7 +170,10 @@ install:
 
 
 build:
-  off
+  If (-Not (Test-Path(".\EventGhost.exe"))) {
+    Return -1
+  }
+  # off
   # If we don't turn build off, we get an error from appveyor telling us,
   # we should decide, which project or solution file to use, because the
   # folder contains more than one project or solution file.
