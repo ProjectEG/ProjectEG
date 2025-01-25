@@ -71,7 +71,7 @@ install:
           " "
           "--- " + $msg
           "    Installing..."
-          $cmmd = "-m pip install -q --disable-pip-version-check " + $mod
+          $cmmd = "-m pip install -q --disable-pip-version-check --no-python-version-warning " + $mod
           PySl $cmmd
           "    Done."
         }
@@ -94,12 +94,6 @@ install:
         Execute "$WXInstaller /VERYSILENT /SUPPRESSMSGBOXES"
         "    Done."
         " "
-        " --- "
-        PySl "--version"
-        PySl "-m pip --version"
-        PySl "-m pip list"
-        "---"
-        " "
         "--- pip 20.3.4"
         "    Updating..."
         $PIP_URL = "https://files.pythonhosted.org/packages/27/79/8a850fe3496446ff0d584327ae44e7500daf6764ca1a382d2d02789accf7/pip-20.3.4-py2.py3-none-any.whl#sha256=217ae5161a0e08c0fb873858806e3478c9775caffce5168b50ec885e358c199d"
@@ -115,7 +109,7 @@ install:
         " "
         "--- setuptools 44.1.1"
         "    Updating..."
-        PySl '-m pip install --disable-pip-version-check -q -U "setuptools==44.1.1"'
+        PySl '-m pip install --disable-pip-version-check --no-python-version-warning -q -U "setuptools==44.1.1"'
         "    Done."
         PipInstall "wheel 0.37.1" "wheel==0.37.1"
         PipInstall "sphinx 1.8.6" "sphinx==1.8.6"
