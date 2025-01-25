@@ -39,8 +39,7 @@ install:
 
   #- ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
   - ps: |
-      # $Env:PATH = $Env:PATH -replace "Python27", "Stackless27"
-      $PythonFolder = "c:\python27"  # $Env:PYTHON
+      $PythonFolder = "c:\python27"
       $PythonScripts = $PythonFolder + "\Scripts"
       $SitePackages = $PythonFolder + "\lib\site-packages"
       $SysWOW = $Env:SYSTEMROOT + "\SysWOW64"
@@ -61,7 +60,7 @@ install:
 
         Function PySl ($command)
         {
-          Execute "$PythonFolder\python.exe $command"
+          Execute '$PythonFolder\python.exe $command'
         }
         
         Function PipInstall ($msg, $mod)
@@ -190,8 +189,12 @@ build:
 
 
 after_build:
-  If (-Not (Test-Path(".\EventGhost.exe"))) {
+  If (-Not (Test-Path(".\EventGhost.exe"))) 
+  {
+    "Fehler"
     Return -1
+  } Else {
+    "Erfolgreich"
   }
 
 
