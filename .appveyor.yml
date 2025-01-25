@@ -21,7 +21,8 @@ matrix:
 
 
 cache:
-  - '%PYTHON%'
+  # Invalidate cache if .appveyor.yml has changed
+  - C:\Stackless27 -> .appveyor.yml
   # Manually clear cache:
   # from agithub.AppVeyor import AppVeyor
   # ci = AppVeyor(<your appveyor API token>)
@@ -46,7 +47,6 @@ install:
       $PythonWindowsDLL = $SysWOW + "\python27.dll"
       $PythonDLL = $PythonFolder + "\python27.dll"
       $InstallersFolder = $Env:APPVEYOR_BUILD_FOLDER + "\_build\installers\"
-      #$wget = "c:\wget64\wget64.exe"
 
       Remove-Item $PythonWindowsDLL
       New-Item $InstallersFolder -type directory | Out-Null
@@ -80,42 +80,27 @@ install:
         Start-Process $WXInstaller -Arg "/VERYSILENT /SUPPRESSMSGBOXES" -NoNewWindow -Wait
         "    Done."
         " "
-        "--- pip 9.0.1"
+        "--- pip 20.3.4"
         "    Updating..."
-        python -m pip install -q -U "pip==9.0.1"
+        python -m pip install --no-cache-dir -q -U "pip==20.3.4"
         "    Done."
         " "
-        "--- setuptools 34.3.0"
+        "--- setuptools 44.1.1"
         "    Updating..."
-        pip install -q -U "setuptools==34.3.0"
+        pip install -q -U "setuptools==44.1.1"
         "    Done."
-        " "
-        PipInstall "wheel 0.29.0" "wheel==0.29.0"
-        # sphinx >= 1.4.9 installs jinja2 >= 2.3 as dependency,
-        # jinja2 >= 2.9 has an async module which py2exe has
-        # problems with (build of eg will fail)
-        PipInstall "jinja2 2.8.1" "jinja2==2.8.1"
-        PipInstall "sphinx 1.4.8" "sphinx==1.4.8"
-        PipInstall "commonmark 0.7.3" "commonmark==0.7.3"
-        PipInstall "pillow 3.4.2" "pillow==3.4.2"
+        PipInstall "wheel 0.37.1" "wheel==0.237.1"
+        PipInstall "sphinx 1.8.6" "sphinx==1.8.6"
+        PipInstall "commonmark 0.9.1" "commonmark==0.9.1"
+        PipInstall "pillow 6.2.2" "pillow==6.2.2"
         PipInstall "py2exe 0.6.9" "py2exe_py2==0.6.9"
-        PipInstall "pycrypto 2.6.1" "pycrypto==2.6.1"
-        PipInstall "comtypes 1.1.3" "https://github.com/enthought/comtypes/archive/1.1.3.zip"
-        PipInstall "ctypeslib 0.5.6" "svn+http://svn.python.org/projects/ctypes/trunk/ctypeslib/#ctypeslib=0.5.6"
-        #pip list --format=columns
-        " "
-        "--- pywin32 220 -----------"
-        $PyWinInstaller = $InstallersFolder + "pywin32-220.win32-py2.7.exe"
-        $PyWinURL = "https://sourceforge.net/projects/pywin32/files/pywin32/Build%20220/pywin32-220.win32-py2.7.exe/download"
-        Start-FileDownload $PyWinURL -Timeout 60000 -FileName $PyWinInstaller
-        "    Installing..."
-        cd $InstallersFolder
-        7z x -bd -y "pywin32-220.win32-py2.7.exe" -opywin32 | Out-Null
-        cd pywin32
-        Copy-Item -Path ".\PLATLIB\*" -Destination $SitePackages -recurse
-        Copy-Item -Path ".\SCRIPTS\*" -Destination $PythonScripts -recurse
-        cd $Env:APPVEYOR_BUILD_FOLDER
-        "    Done."
+        PipInstall "pycryptodome 3.21.0" "pycryptodome==3.21.0"
+        PipInstall "comtypes 1.2.1" "comtypes==1.2.1"
+        # "https://github.com/enthought/comtypes/archive/1.2.1.zip"
+        PipInstall "ctypeslib 0.5.8" "ctypeslib3==0.5.8"
+        # "svn+http://svn.python.org/projects/ctypes/trunk/ctypeslib/#ctypeslib=0.5.6"
+        PipInstall "paramiko 2.12.0" "paramiko==2.12.0"
+        PipInstall "pywin32 228" pywin32==228
       }
       " "
       "--- pywin32 post install"
@@ -123,9 +108,9 @@ install:
       Start-Process python -Arg "$PywinPostInstall -install -silent -quiet" -Wait
       "    Done."
       " "
-      "--- Inno Setup 5.5.9"
-      $InnoInstaller = $InstallersFolder + "innosetup-5.5.9-unicode.exe"
-      $InnoURL = "http://files.jrsoftware.org/is/5/innosetup-5.5.9-unicode.exe"
+      "--- Inno Setup 6.4.0"
+      $InnoInstaller = $InstallersFolder + "innosetup-6.4.0.exe"
+      $InnoURL = "https://files.innosetup.nl/innosetup-6.4.0.exe"
       Start-FileDownload $InnoURL -Timeout 60000 -FileName $InnoInstaller | ForEach-Object { Write-Host "    " + $_ }
       "    Installing..."
       Start-Process $InnoInstaller -Arg "/SP /VERYSILENT /SUPPRESSMSGBOXES /NORESTART /RESTARTAPPLICATIONS /NOICONS" -NoNewWindow -Wait
@@ -142,12 +127,27 @@ install:
         # this tag will be deleted and a new release "vVERSION" created.
         git checkout -q master
         $release = $Env:APPVEYOR_REPO_TAG_NAME.split("_", 2)[1]
-        python "_build\Build.py" --build --package --release --version $release
+        $url = if($Env:SFTP_URL){' --docs --url "' + $env:SFTP_URL + '"'} else {''}
+        python "_build\Build.py" --build --package --release --version $release $url
       } Else {
         # WIP
         python "_build\Build.py" --build --package
+        .\EventGhost.exe -install
       }
       $Env:SetupExe = gci -recurse -filter "_build\output\*Setup.exe" -name
+
+      # update the appveyor build version to be the same as the EventGhost version
+      $start = $env:SetupExe.IndexOf("_")
+      $length = $env:SetupExe.LastIndexOf("_") - $start
+      $build_version = $env:SetupExe.Substring($start + 1, $length - 1)
+      Update-AppveyorBuild -Version "$build_version"
+
+      # Make sure the appveyor cache is only saved if our build was successfull
+      If (-Not (Test-Path(".\EventGhost.exe"))) {
+        $env:APPVEYOR_CACHE_SKIP_SAVE = "true"
+      Return -1
+      }
+
       " "
 
       "=============== EventGhost build finished ==============="
@@ -171,10 +171,34 @@ build:
 
 artifacts:
   - path: _build\output\$(SetupExe)
+    name: $(SetupExe)
   - path: _build\output\Build.log
+    name: Build.log
   - path: _build\output\CHANGELOG.md
-  - path: _build\output\CHANGELOG_THIS_RELEASE.bb
+    name: CHANGELOG.md
   - path: _build\output\CHANGELOG_THIS_RELEASE.md
+    name: CHANGELOG_THIS_RELEASE.md
+  - path: _build\output\CHANGELOG_THIS_RELEASE.bb
+    name: CHANGELOG_THIS_RELEASE.bb
+
+
+notifications:
+- provider: GitHubPullRequest
+  template: >-
+    [{{buildVersion}} {{status}}]({{buildUrl}}) (commit {{commitUrl}})
+
+    Artifacts:
+
+    {{#jobs}}
+    {{#artifacts}}
+    [{{name}}]({{permalink}})
+
+    {{/artifacts}}
+    {{/jobs}}
+
+  on_build_success: true
+  on_build_failure: true
+  on_build_status_changed: false
 
 
 #on_finish:
