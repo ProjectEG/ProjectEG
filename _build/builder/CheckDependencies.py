@@ -18,7 +18,7 @@
 
 import glob
 import os
-import pip
+import pkg_resources
 import platform
 import re
 import sys
