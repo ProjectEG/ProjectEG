@@ -59,9 +59,15 @@ install:
           " "
           "--- " + $msg
           "    Installing..."
-          Start-Process python.exe -Arg "-m pip install -q $mod" -NoNewWindow -Wait
+          $(cmd /c "c:\python.exe -m pip install -q $mod  2>&1")
           "    Done."
         }
+
+        Function Execute ($command)
+        {
+          $(cmd /c "$command  2>&1")
+        }
+        
         " "
         "--- Stackless 2.7.12150 x86"
         $StacklessInstaller = $InstallersFolder + "python-2.7.12150-stackless.msi"
@@ -69,7 +75,7 @@ install:
         $StacklessURL = "http://www.stackless.com/binaries/python-2.7.12150-stackless.msi"
         Start-FileDownload $StacklessURL -Timeout 60000 -FileName $StacklessInstaller
         "    Installing..."
-        Start-Process MsiExec.exe -Arg "/I $StacklessInstaller /quiet /passive /qn /norestart $StacklessInstallDir" -Wait
+        Execute "MsiExec.exe /I $StacklessInstaller /quiet /passive"
         "    Done."
         " "
         "--- wxPython 3.0.2.0"
@@ -77,7 +83,7 @@ install:
         $WXURL = "http://downloads.sourceforge.net/wxpython/wxPython3.0-win32-3.0.2.0-py27.exe"
         Start-FileDownload $WXURL -Timeout 60000 -FileName $WXInstaller
         "    Installing..."
-        Start-Process $WXInstaller -Arg "/VERYSILENT /SUPPRESSMSGBOXES" -NoNewWindow -Wait
+        Execute "$WXInstaller /VERYSILENT /SUPPRESSMSGBOXES"
         "    Done."
         " "
         " --- "
