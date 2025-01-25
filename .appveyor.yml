@@ -80,7 +80,7 @@ install:
         "--- Stackless 2.7.12150 x86"
         $StacklessInstaller = $InstallersFolder + "python-2.7.12150-stackless.msi"
         $StacklessInstallDir = "TARGETDIR=" + $PythonFolder
-        $StacklessURL = "http://www.stackless.com/binaries/python-2.7.12150-stackless.msi"
+        $StacklessURL = "http://www.stackless.com/binaries/python-2.7.16150-stackless.msi"
         Start-FileDownload $StacklessURL -Timeout 60000 -FileName $StacklessInstaller
         "    Installing..."
         Execute "MsiExec.exe /I $StacklessInstaller /quiet /passive /norestart /qn TARGETDIR=c:\stackless27"
@@ -102,8 +102,9 @@ install:
         " "
         "--- pip 20.3.4"
         "    Updating..."
-        PySl "-m ensurepip --upgrade"
-        PySl '-m pip install --no-cache-dir -q -U "pip==20.3.4" '
+        $PIP_URL = "https://files.pythonhosted.org/packages/27/79/8a850fe3496446ff0d584327ae44e7500daf6764ca1a382d2d02789accf7/pip-20.3.4-py2.py3-none-any.whl#sha256=217ae5161a0e08c0fb873858806e3478c9775caffce5168b50ec885e358c199d"
+        Start-FileDownload $PIP_URL -Timeout 60000
+        PySl '-m pip install -q -U .\pip-20.3.4-py2.py3-none-any.whl'
         "    Done."
         " "
         " --- "
