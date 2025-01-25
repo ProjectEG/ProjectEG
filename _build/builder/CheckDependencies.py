@@ -177,27 +177,28 @@ class ModuleDependency(DependencyBase):
             raise WrongVersion
 
 
-# class PyWin32Dependency(DependencyBase):
-#     name = "pywin32"
-#     version = "228"
-#     url = "https://eventghost.github.io/dist/dependencies/pywin32-220-cp27-none-win32.whl"
+class PyWin32Dependency(DependencyBase):
+    name = "pywin32"
+    module = "pywin32"
+    version = "228"
+    # url = "https://eventghost.github.io/dist/dependencies/pywin32-220-cp27-none-win32.whl"
 
-#     def Check(self):
-#         versionFilePath = join(
-#             sys.prefix, "lib/site-packages/pywin32.version.txt"
-#         )
-#         try:
-#             version = open(versionFilePath, "rt").readline().strip()
-#         except IOError:
-#             raise MissingDependency
-#         if CompareVersion(version, self.version) < 0:
-#             raise WrongVersion
+    def Check(self):
+        versionFilePath = join(
+            sys.prefix, "lib/site-packages/pywin32.version.txt"
+        )
+        try:
+            version = open(versionFilePath, "rt").readline().strip()
+        except IOError:
+            raise MissingDependency
+        if CompareVersion(version, self.version) < 0:
+            raise WrongVersion
 
 
 class StacklessDependency(DependencyBase):
     name = "Stackless Python"
-    version = "2.7.9"
-    url = "http://www.stackless.com/binaries/python-2.7.9150-stackless.msi"
+    version = "2.7.16"
+    url = "http://www.stackless.com/binaries/python-2.7.16150-stackless.msi"
 
     def Check(self):
         try:
@@ -222,7 +223,7 @@ DEPENDENCIES = [
     ModuleDependency(
         name = "ctypeslib3",
         module = "ctypeslib",
-        version = "0.5.8",
+        version = "0.5.6",
         # url = "https://eventghost.github.io/dist/dependencies/ctypeslib-0.5.6-cp27-none-any.whl"
     ),
     ModuleDependency(
@@ -259,12 +260,7 @@ DEPENDENCIES = [
         version = "3.21.0",
         # url = "https://eventghost.github.io/dist/dependencies/pycrypto-2.6.1-cp27-none-win32.whl",
     ),
-    #PyWin32Dependency(),
-    ModuleDependency(
-        name = "pywin32",
-        module = "pywin32",
-        version = "228",
-    ),
+    PyWin32Dependency(),
     ModuleDependency(
         name = "Sphinx",
         module = "sphinx",
