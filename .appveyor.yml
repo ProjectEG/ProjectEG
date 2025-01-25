@@ -59,7 +59,7 @@ install:
           " "
           "--- " + $msg
           "    Installing..."
-          python.exe -m pip install -q $mod 2>&1
+          Start-Process python.exe -Arg "-m pip install -q $mod" -NoNewWindow -Wait
           "    Done."
         }
         " "
@@ -81,9 +81,9 @@ install:
         "    Done."
         " "
         " --- "
-        Start-Process python.exe -Arg "--version" -Wait
-        Start-Process python.exe -Arg "-m pip --version" -Wait
-        Start-Process python.exe -Arg "-m pip list" -Wait
+        Start-Process python.exe -Arg "--version"-NoNewWindow  -Wait
+        Start-Process python.exe -Arg "-m pip --version" -NoNewWindow -Wait
+        Start-Process python.exe -Arg "-m pip list" -NoNewWindow -Wait
         "---"
         " "
         "--- pip 20.3.4"
@@ -93,9 +93,9 @@ install:
         "    Done."
         " "
         " --- "
-        Start-Process python.exe -Arg "--version" -Wait
-        Start-Process python.exe -Arg "-m pip --version" -Wait
-        Start-Process python.exe -Arg "-m pip list" -Wait
+        Start-Process python.exe -Arg "--version" -NoNewWindow -Wait
+        Start-Process python.exe -Arg "-m pip --version" -NoNewWindow -Wait
+        Start-Process python.exe -Arg "-m pip list" -NoNewWindow -Wait
         "---"
         " "
         "--- setuptools 44.1.1"
