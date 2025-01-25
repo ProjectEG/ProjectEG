@@ -80,13 +80,23 @@ install:
         Start-Process $WXInstaller -Arg "/VERYSILENT /SUPPRESSMSGBOXES" -NoNewWindow -Wait
         "    Done."
         " "
+        " --- "
         python --version
         python -m pip --version
         python -m pip list
+        "---"
+        " "
         "--- pip 20.3.4"
         "    Updating..."
+        python -m ensurepip --upgrade
         python -m pip install --no-cache-dir -q -U "pip==20.3.4"
         "    Done."
+        " "
+        " --- "
+        python --version
+        python -m pip --version
+        python -m pip list
+        "---"
         " "
         "--- setuptools 44.1.1"
         "    Updating..."
