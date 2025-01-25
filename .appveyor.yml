@@ -60,7 +60,8 @@ install:
 
         Function PySl ($command)
         {
-          Execute '$PythonFolder\python.exe $command'
+          $cmmd = "$PythonFolder\python.exe " + $command
+          Execute "$cmmd"
         }
         
         Function PipInstall ($msg, $mod)
@@ -68,7 +69,8 @@ install:
           " "
           "--- " + $msg
           "    Installing..."
-          PySl '-m pip install -q $mod'
+          $cmmd = "-m pip install -q " + $mod
+          PySl $cmmd
           "    Done."
         }
 
