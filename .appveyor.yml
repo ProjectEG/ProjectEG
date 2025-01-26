@@ -1,34 +1,33 @@
-# In AppVeyor's web config add an enviremont variable named GITHUB_TOKEN.
+# In AppVeyor's web config add an environment variable named GITHUB_TOKEN.
 # Set it to a token you've created on GitHub.
 # To draft a release on GitHub with AppVeyor, create a tag on master.
 
-
 version: '{build}-{branch}'
 
+image: Visual Studio 2015
 
 #init:
 #  # Enable Remotedesktop and pause the build execution
 #  - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
 
+clone_depth: 2
 
 environment:
   PYTHON: 'C:\Stackless27'
   PYTHONPATH: 'C:\Stackless27;C:\Stackless27\Scripts;C:\Stackless27\DLLs;C:\Stackless27\Lib;C:\Stackless27\Lib\site-packages;'
 
-
 matrix:
   fast_finish: true
-
 
 cache:
   # Invalidate cache if .appveyor.yml has changed
   - C:\stackless27 -> .appveyor.yml
+  
   # Manually clear cache:
   # from agithub.AppVeyor import AppVeyor
   # ci = AppVeyor(<your appveyor API token>)
   # status, data = ci.api.projects.<appveyor username>.<appveyor projectname>.buildcache.delete()
   # print status  # 204 = Ok, cache deleted
-
 
 install:
   # HTML Help Workshop 1.32
