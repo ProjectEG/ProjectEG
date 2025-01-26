@@ -105,11 +105,12 @@ install:
         PySl '-m pip install --disable-pip-version-check --no-python-version-warning -q -U "setuptools==44.1.1"'
         "    Done."
         PipInstall "wheel 0.37.1" "wheel==0.37.1"
+        PipInstall "Jinja2 2.8.1" "jinja2==2.8.1"
         PipInstall "sphinx 1.8.6" "sphinx==1.8.6"
         PipInstall "commonmark 0.9.1" "commonmark==0.9.1"
         PipInstall "pillow 6.2.2" "pillow==6.2.2"
         PipInstall "py2exe 0.6.9" "py2exe_py2==0.6.9"
-        PipInstall "pycryptodome 3.21.0" "pycryptodome==3.21.0"
+        PipInstall "PyCrypto 2.6.1" "PyCrypto==2.6.1"
         PipInstall "comtypes 1.2.1" "comtypes==1.2.1"
         # "https://github.com/enthought/comtypes/archive/1.2.1.zip"
         PipInstall "ctypeslib 0.5.8" "ctypeslib3==0.5.8"
