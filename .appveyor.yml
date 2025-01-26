@@ -56,7 +56,7 @@ install:
         Function Execute ($command)
         {
           $result = $(cmd /c "$command  2>&1")
-          "$result"
+          If ($result) { "$result" }
         }
 
         Function PySl ($command)
