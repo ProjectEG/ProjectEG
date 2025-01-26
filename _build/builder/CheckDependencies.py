@@ -262,6 +262,11 @@ DEPENDENCIES = [
     ),
     PyWin32Dependency(),
     ModuleDependency(
+        name = "Jinja2",
+        module = "jinja2",
+        version = "2.8.1",
+    ),
+    ModuleDependency(
         name = "Sphinx",
         module = "sphinx",
         version = "1.8.6",

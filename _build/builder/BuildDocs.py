@@ -20,7 +20,7 @@ import codecs
 import os
 import re
 import shutil
-import sphinx
+import sphinx.cmd.build
 from os.path import join
 
 # Local imports
@@ -75,8 +75,7 @@ class BuildChmDocs(builder.Task):
         tmpDir = join(self.buildSetup.tmpDir, "chm")
         Prepare()
         #warnings.simplefilter('ignore', DeprecationWarning)
-        sphinx.build_main([
-            None,
+        sphinx.cmd.build.main([
             # '-q',  # be quiet
             "-a",  # always write all output files
             "-b", "htmlhelp",
