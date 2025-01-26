@@ -256,7 +256,7 @@ DEPENDENCIES = [
     ),
     ModuleDependency(
         name = "pycryptodome",
-        module = "pycryptodome",
+        module = "Crypto",
         version = "3.21.0",
         # url = "https://eventghost.github.io/dist/dependencies/pycrypto-2.6.1-cp27-none-win32.whl",
     ),
