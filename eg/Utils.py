@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of EventGhost.
-# Copyright © 2005-2016 EventGhost Project <http://www.eventghost.org/>
+# Copyright © 2005-2020 EventGhost Project <http://www.eventghost.net/>
 #
 # EventGhost is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free
@@ -23,6 +23,8 @@ import threading
 import time
 import warnings
 import wx
+import traceback
+from locale import windows_locale
 from commonmark import commonmark
 from ctypes import c_ulonglong, windll
 from datetime import datetime as dt, timedelta as td
@@ -46,7 +48,7 @@ __all__ = [
     "Bunch", "NotificationHandler", "LogIt", "LogItWithReturn", "TimeIt",
     "AssertInMainThread", "AssertInActionThread", "ParseString", "SetDefault",
     "EnsureVisible", "VBoxSizer", "HBoxSizer", "EqualizeWidths", "AsTasklet",
-    "ExecFile", "GetTopLevelWindow",
+    "ExecFile", "GetTopLevelWindow", "GetClosestLanguage"
 ]
 
 USER_CLASSES = (type, ClassType)
@@ -136,11 +138,14 @@ def AssertInActionThread(func):
 
     def AssertWrapper(*args, **kwargs):
         if eg.actionThread._ThreadWorker__thread != threading.currentThread():
-            raise AssertionError(
-                "Called outside ActionThread: %s() in %s" %
-                (func.__name__, func.__module__)
-            )
-        return func(*args, **kwargs)
+            try:
+                raise AssertionError(
+                    "Called outside ActionThread: %s() in %s" %
+                    (func.__name__, func.__module__)
+                )
+            except AssertionError:
+                eg.PrintWarningNotice(traceback.format_exc())
+
         return func(*args, **kwargs)
 
     return update_wrapper(AssertWrapper, func)
@@ -151,10 +156,14 @@ def AssertInMainThread(func):
 
     def AssertWrapper(*args, **kwargs):
         if eg.mainThread != threading.currentThread():
-            raise AssertionError(
-                "Called outside MainThread: %s in %s" %
-                (func.__name__, func.__module__)
-            )
+            try:
+                raise AssertionError(
+                    "Called outside MainThread: %s in %s" %
+                    (func.__name__, func.__module__)
+                )
+            except AssertionError:
+                eg.PrintWarningNotice(traceback.format_exc())
+
         return func(*args, **kwargs)
 
     return update_wrapper(AssertWrapper, func)
@@ -293,15 +302,20 @@ def GetClosestLanguage():
     """
     langDir = join(dirname(abspath(sys.executable)), "languages")
     if exists(langDir):
-        locale = wx.Locale()
-        name = locale.GetLanguageCanonicalName(locale.GetSystemLanguage())
-        if exists(join(langDir, name + ".py")):
-            return name
-        else:
-            for f in [f for f in os.listdir(langDir) if f.endswith(".py")]:
-                if f.startswith(name[0:3]):
-                    return f[0:5]
-    return "en_EN"
+        uiLang = windows_locale[windll.kernel32.GetUserDefaultUILanguage()]
+
+        langFiles = tuple(
+            f[:-3] for f in os.listdir(langDir)
+            if f.endswith(".py") and (
+                f.startswith(uiLang) or f.startswith(uiLang[:3])
+            )
+        )
+        if uiLang in langFiles:
+            return uiLang
+        if langFiles:
+            return langFiles[0]
+
+    return "en_US"
 
 def GetFirstParagraph(text):
     """
@@ -394,11 +408,11 @@ def IsVista():
     """
     warnings.warn(
         "eg.Utils.IsVista() is deprecated. "
-        "Use eg.WindowsVersion.IsVista() instead",
+        "Use eg.WindowsVersion >= 'Vista' instead",
         DeprecationWarning,
         stacklevel=2
     )
-    return eg.WindowsVersion.IsVista()
+    return eg.WindowsVersion >= 'Vista'
 
 def IsXP():
     """
@@ -406,11 +420,11 @@ def IsXP():
     """
     warnings.warn(
         "eg.Utils.IsXP() is deprecated. "
-        "Use eg.WindowsVersion.IsXP() instead",
+        "Use eg.WindowsVersion >= 'XP' instead",
         DeprecationWarning,
         stacklevel=2
     )
-    return eg.WindowsVersion.IsXP()
+    return eg.WindowsVersion >= 'XP'
 
 def LogIt(func):
     """

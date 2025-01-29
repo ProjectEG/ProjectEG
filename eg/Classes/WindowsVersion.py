@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of EventGhost.
-# Copyright © 2005-2016 EventGhost Project <http://www.eventghost.org/>
+# Copyright © 2005-2020 EventGhost Project <http://www.eventghost.net/>
 #
 # EventGhost is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free
@@ -122,6 +122,7 @@ class WindowsVersion:
     +-----------+--------------------------------------+
 
     |
+
     .. The above line gives some extra space after the table in the helpfile.
        References:
            https://msdn.microsoft.com/en-us/library/windows/desktop/ms724832(v=vs.85).aspx

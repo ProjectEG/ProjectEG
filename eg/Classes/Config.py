@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of EventGhost.
-# Copyright © 2005-2016 EventGhost Project <http://www.eventghost.org/>
+# Copyright © 2005-2020 EventGhost Project <http://www.eventghost.net/>
 #
 # EventGhost is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free
@@ -19,6 +19,7 @@
 import os
 import sys
 from os.path import exists
+from cStringIO import StringIO
 from types import ClassType, InstanceType
 
 # Local imports
@@ -53,6 +54,7 @@ class Config(Section):
     checkPreRelease = False
     colourPickerCustomColours = [(-1, -1, -1, 255) for n in range(16)]
     confirmDelete = True
+    datestamp = "%x"
     defaultThreadStartTimeout = 5.00
     hideOnClose = False
     hideOnStartup = False
@@ -99,9 +101,10 @@ class Config(Section):
 
     def Save(self):
         self.version = eg.Version.string
-        configFile = open(self._configFilePath, 'w+')
-        RecursivePySave(self, configFile.write)
-        configFile.close()
+        config_data = StringIO()
+        RecursivePySave(self, config_data.write)
+        with open(self._configFilePath, 'w+') as config_file:
+            config_file.write(config_data.getvalue())
 
 
 def MakeSectionMetaClass(dummyName, dummyBases, dct):

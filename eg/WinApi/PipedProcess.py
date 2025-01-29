@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of EventGhost.
-# Copyright © 2005-2016 EventGhost Project <http://www.eventghost.org/>
+# Copyright © 2005-2020 EventGhost Project <http://www.eventghost.net/>
 #
 # EventGhost is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free
@@ -183,12 +183,13 @@ def GetUncPathOf(filePath):
         print "GetUncPathOf Error:", err, FormatError(err)
     return filePath
 
-if eg.debugLevel:
-    def Msg(msg):
-        print msg
-else:
-    def Msg(dummyMsg):
+
+def Msg(msg):
+    try:
+        eg.PrintDebugNotice(str(msg))
+    except:
         pass
+
 
 def RunAs(filePath, asAdministrator, *args):
     sei = SHELLEXECUTEINFO()

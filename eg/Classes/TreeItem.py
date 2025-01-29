@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of EventGhost.
-# Copyright © 2005-2016 EventGhost Project <http://www.eventghost.org/>
+# Copyright © 2005-2020 EventGhost Project <http://www.eventghost.net/>
 #
 # EventGhost is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free
@@ -43,6 +43,7 @@ class TreeItem(object):
     childs = ()
     isDeactivatable = True
     isConfigurable = False
+    isFirstConfigure = False
     isRenameable = True
     isExecutable = False
     isMoveable = True
@@ -172,7 +173,6 @@ class TreeItem(object):
     def DropTest(self, dropNode):
         return self.dropBehaviour.get(dropNode.xmlTag, HINT_NO_DROP)
 
-    @eg.AssertInActionThread
     def Execute(self):
         return None, None
 

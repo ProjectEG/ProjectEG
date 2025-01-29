@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of EventGhost.
-# Copyright © 2005-2016 EventGhost Project <http://www.eventghost.org/>
+# Copyright © 2005-2020 EventGhost Project <http://www.eventghost.net/>
 #
 # EventGhost is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free
@@ -26,7 +26,7 @@ from win32com.client import GetObject
 # Local imports
 import eg
 import Dynamic
-from eg.cFunctions import GetProcessName, GetWindowChildsList
+from cFunctions import GetProcessName, GetWindowChildsList
 from Dynamic import (
     # ctypes stuff
     byref, sizeof, WinError, _kernel32,

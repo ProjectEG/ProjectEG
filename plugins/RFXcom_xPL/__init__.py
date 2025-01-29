@@ -31,7 +31,7 @@ eg.RegisterPlugin(
         '<br\n><br\n>'
         '<center><img src="xPL_plugin.png" /></center>'
     ),
-    url = "http://www.eventghost.org/forum/viewtopic.php?f=9&t=2077",
+    url = "http://www.eventghost.net/forum/viewtopic.php?f=9&t=2077",
 )
 
 import os, time, string, select, re
@@ -263,7 +263,7 @@ class RFXcom(eg.PluginClass):
         logStr = timeStamp+"\t"+s+"<br\n>"
         fileHandle = None
 
-        if eg.WindowsVersion.IsVista():
+        if eg.WindowsVersion >= 'Vista':
             progData = os.environ['ALLUSERSPROFILE']
             if (
                 not os.path.exists(progData+"/EventGhost/Log")

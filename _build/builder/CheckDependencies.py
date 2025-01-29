@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of EventGhost.
-# Copyright © 2005-2016 EventGhost Project <http://www.eventghost.org/>
+# Copyright © 2005-2020 EventGhost Project <http://www.eventghost.net/>
 #
 # EventGhost is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free
@@ -133,7 +133,7 @@ class InnoSetupDependency(DependencyBase):
     name = "Inno Setup"
     version = "6.4.0"
     package = "innosetup"
-    # url = "http://www.innosetup.com/isdl.php"
+    #url = "http://www.innosetup.com/isdl.php"
     url = "https://files.jrsoftware.org/is/6/innosetup-6.4.0.exe"
 
     def Check(self):
@@ -166,6 +166,7 @@ class ModuleDependency(DependencyBase):
             else:
                 if dist.has_version():
                     result = dist.version
+
             if result:
                 version = result
             else:
@@ -181,7 +182,6 @@ class PyWin32Dependency(DependencyBase):
     name = "pywin32"
     module = "pywin32"
     version = "228"
-    # url = "https://eventghost.github.io/dist/dependencies/pywin32-220-cp27-none-win32.whl"
 
     def Check(self):
         versionFilePath = join(
@@ -224,7 +224,6 @@ DEPENDENCIES = [
         name = "ctypeslib3",
         module = "ctypeslib",
         version = "0.5.6",
-        # url = "https://eventghost.github.io/dist/dependencies/ctypeslib-0.5.6-cp27-none-any.whl"
     ),
     ModuleDependency(
         name = "future",
@@ -258,7 +257,6 @@ DEPENDENCIES = [
         name = "PyCrypto",
         module = "Crypto",
         version = "2.6.1",
-        # url = "https://eventghost.github.io/dist/dependencies/pycrypto-2.6.1-cp27-none-win32.whl",
     ),
     PyWin32Dependency(),
     ModuleDependency(

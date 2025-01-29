@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of EventGhost.
-# Copyright © 2005-2016 EventGhost Project <http://www.eventghost.org/>
+# Copyright © 2005-2020 EventGhost Project <http://www.eventghost.net/>
 #
 # EventGhost is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free
@@ -52,13 +52,16 @@ class StdHandler(object):
             self.logger(line)
             if self.verbose:
                 self.oldStream.write(line + "\n")
+                self.oldStream.flush()
         self.buf = lines[-1]
+        self.flush()
 
 
 class InfoFilter(logging.Filter):
     def filter(self, rec):
         if rec.levelno == 22:
             sys.stdout.oldStream.write(rec.msg + "\n")
+            sys.stdout.oldStream.flush()
         return True
 
 

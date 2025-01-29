@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of EventGhost.
-# Copyright © 2005-2016 EventGhost Project <http://www.eventghost.org/>
+# Copyright © 2005-2020 EventGhost Project <http://www.eventghost.net/>
 #
 # EventGhost is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free
@@ -20,12 +20,16 @@ import sys
 import threading
 import time
 import wx
+import ctypes
 
 # Local imports
 import eg
 from eg.WinApi.Dynamic import ExitProcess, SetProcessShutdownParameters
+from Translation import LCID_TO_WX
 
-IS_VISTA = eg.WindowsVersion.IsVista()
+IS_VISTA = eg.WindowsVersion >= 'Vista'
+
+kernel32 = ctypes.windll.kernel32
 
 if IS_VISTA:
     from eg.WinApi.Dynamic import _user32, BOOL, HWND, LPCWSTR
@@ -43,7 +47,11 @@ class App(wx.App):
     def __init__(self):
         self.onExitFuncs = []
         wx.App.__init__(self, 0)
-        self.locale = wx.Locale(wx.Locale.GetSystemLanguage())
+        lang_id = LCID_TO_WX.get(kernel32.GetUserDefaultUILanguage(), None)
+
+        if lang_id is not None:
+            self.locale = wx.Locale(lang_id)
+
         self.shouldVeto = False
         self.firstQuery = True
         self.endSession = False
@@ -200,13 +208,12 @@ class App(wx.App):
     def Restart(self, asAdmin=False):
         def Do():
             from eg.WinApi.PipedProcess import RunAs
+
             args = self.GetArguments()
             args.append("-restart")
-            if self.Exit():
-                RunAs(sys.executable, asAdmin, *args)
-                return True
-            else:
-                return False
+            RunAs(sys.executable, asAdmin, *args)
+            return True
+
         if threading.currentThread() == eg.mainThread:
             return Do()
         else:

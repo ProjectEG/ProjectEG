@@ -3,7 +3,7 @@
 # Copyright (C) 2006 MonsterMagnet
 #
 # This file is a plugin for EventGhost.
-# Copyright © 2005-2016 EventGhost Project <http://www.eventghost.org/>
+# Copyright © 2005-2020 EventGhost Project <http://www.eventghost.net/>
 #
 # EventGhost is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free
@@ -29,7 +29,7 @@ Enable the RC Interface or start VLC with:
 If you are using "MyCommand" remember that you can only execute commands that
 are enabled in VLC!
 
-`Help and bugreports <http://www.eventghost.org/forum/viewtopic.php?t=693>`_
+`Help and bugreports <http://www.eventghost.net/forum/viewtopic.php?t=693>`_
 
 .. _VLC media player: http://www.videolan.org/
 """
@@ -37,8 +37,8 @@ are enabled in VLC!
 
 eg.RegisterPlugin(
     name = "VLC media player",
-    author = "MonsterMagnet",
-    version = "0.4.1486",
+    author = "MonsterMagnet, GruberMarkus",
+    version = "0.5",
         kind = "program",
     guid = "{02929D1C-7567-414C-84D1-F8D71D6FD7B3}",
     canMultiLoad = True,
@@ -60,7 +60,7 @@ eg.RegisterPlugin(
         "Hdn5XEojkgbFIE6sJwWm6hDwYr/okIz367GENRMtqihs9Df+Brue2BE7hqGjAAAAAElF"
         "TkSuQmCC"
     ),
-    url = "http://www.eventghost.org/forum/viewtopic.php?t=693",
+    url = "http://www.eventghost.net/forum/viewtopic.php?t=693",
 )
 
 
@@ -82,17 +82,18 @@ def GetVlcPath():
     """
     Tries to get the path of VLC's executable through querying the Windows
     registry.
+    Not querying HKLM\Software\VideoLAN\VLC to avoid multiple queries
+    neccessary due to registry virtualization on 64 bit systems.
     """
     try:
-        return _winreg.QueryValue(
-            _winreg.HKEY_LOCAL_MACHINE,
-            "Software\\VideoLAN\\VLC"
-        )
-    except WindowsError:
-        return os.path.join(
-            eg.folderPath.ProgramFiles,
-            "VideoLAN\\VLC\\vlc.exe"
-        )
+        path = _winreg.QueryValue(_winreg.HKEY_LOCAL_MACHINE, "SOFTWARE\Classes\VLC.OPENFolder\shell\Open\command").split("\"")[1]
+    except:
+        return None
+
+    if os.path.exists(path):
+            return path
+    else:
+        return None
 
 
 def GetChoices():
@@ -133,7 +134,7 @@ class VlcSession(asynchat.async_chat):
     def handle_connect(self):
         # connection succeeded
         self.plugin.TriggerEvent("Connected")
-        self.sendall(self.plugin.connectedevent)
+        self.socket.sendall(self.plugin.connectedevent)
 
 
     def handle_expt(self):
@@ -616,7 +617,7 @@ class VLC(eg.PluginBase):
             self.isDispatcherRunning = True
         try:
             if self.dispatcher.connected:
-                self.dispatcher.sendall(data)
+                self.dispatcher.socket.sendall(data)
             return True
         except:
             self.isDispatcherRunning = False
@@ -669,7 +670,7 @@ ACTIONS = (
         'Play',
         'Play',
         'Start playing',
-        'pause'
+        'play'
     ),
     (
         ActionPrototype,
@@ -812,14 +813,14 @@ ACTIONS = (
         'VolumeUp',
         'Volume Up',
         'Volume up',
-        'volup'
+        'volup 1'
     ),
     (
         ActionPrototype,
         'VolumeDown',
         'Volume Down',
         'Volume down',
-        'voldown'
+        'voldown 1'
     ),
     (
         MyCommand,

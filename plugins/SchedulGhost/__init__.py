@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
 
-version="0.1.16"
+version="0.1.19"
 
 # plugins/SchedulGhost/__init__.py
 #
 # Copyright (C)  2010 Pako  (lubos.ruckl@quick.cz)
 #
 # This file is a plugin for EventGhost.
-# Copyright © 2005-2016 EventGhost Project <http://www.eventghost.org/>
+# Copyright © 2005-2020 EventGhost Project <http://www.eventghost.net/>
 #
 # EventGhost is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free
@@ -24,6 +24,12 @@ version="0.1.16"
 #
 # Revision history:
 # -----------------
+# 0.1.19 by topic2k 2018-11-26
+#     - fix: setting the number of days from periodically schedules didn't worked
+# 0.1.18 by topic2k 2017-05-01 11:00 UTC+2
+#     - fix eggtimer handling if two eggtimers are started in the same second
+# 0.1.17 by topic2k 2017-04-29 13:01 UTC+2
+#     - some layout fixes in schedulerDialog
 # 0.1.16 by Sem;colon 2016-03-26 01:15 UTC+1
 #     - bugfix "Do also trigger events for a non-chosen day if the next day happens to be a holiday" wasn't working
 # 0.1.15 by Sem;colon 2015-12-07 20:30 UTC+1
@@ -43,7 +49,7 @@ version="0.1.16"
 # 0.1.9 by Pako 2014-05-17 18:15 UTC+1
 #     - added option to abort egg-timer by name
 # 0.1.8 by Pako 2014-03-09 10:48 UTC+1
-#     - http://www.eventghost.org/forum/viewtopic.php?f=9&t=2740&start=75#p30126
+#     - http://www.eventghost.net/forum/viewtopic.php?f=9&t=2740&start=75#p30126
 # 0.1.7 by Pako 2013-05-05 11:06 UTC+1
 #     - added ReloadXML action (rekall request)
 # 0.1.6 by Pako 2012-09-06 06:46 UTC+1
@@ -94,7 +100,7 @@ eg.RegisterPlugin(
 Events can be scheduled to be triggered periodically,
 once only, daily, weekly, monthly or yearly.''',
     createMacrosOnAdd = True,
-    url = "http://www.eventghost.org/forum/viewtopic.php?f=9&t=2740",
+    url = "http://www.eventghost.net/forum/viewtopic.php?f=9&t=2740",
     icon = (
         "iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAMAAABEpIrGAAADAFBMVEUA//+tra1+fn5q"
         "ampnZ2ePj49mZmYuLi4ICAgAAAAvLy+lpaVPT08PDw8QEBCGhoYmJiYAAgACHAEIPgMO"
@@ -530,7 +536,7 @@ class CalendarPopup(wx.PopupWindow):
         wx.PopupWindow.__init__(self, parent)
         startDate = wx.DateTime()
         startDate.Set(1, 0)
-        self.cal = wxCal.CalendarCtrl(
+        self.cal = wxCal.GenericCalendarCtrl(
             self,
             -1,
             startDate,
@@ -611,7 +617,7 @@ class CheckListCtrl(wx.ListCtrl, CheckListCtrlMixin):
             self,
             parent,
             -1,
-            size = (width, 164),
+            size = (width, -1),
             style = wx.LC_REPORT|wx.LC_HRULES|wx.LC_VRULES|wx.LC_SINGLE_SEL
         )
         self.selRow = -1
@@ -691,6 +697,13 @@ class schedulerDialog(wx.Dialog):
         self.tmpData = self.plugin.tmpData = cpy(self.plugin.data)
         self.text = text
 
+        dynamicSizer = wx.BoxSizer(wx.VERTICAL)
+        typeSizer = wx.StaticBoxSizer(
+            wx.StaticBox(self, -1, ""),
+            wx.VERTICAL
+        )
+        sizer = wx.BoxSizer(wx.VERTICAL)
+
         def fillDynamicSizer(type, data = None, old_type = 255):
             flag = old_type != type
             if flag:
@@ -742,7 +755,6 @@ class schedulerDialog(wx.Dialog):
                         self,
                         self.ctrls[2],
                         choices = choices,
-                        size=((-1,110)),
                     )
                     self.ctrls.append(wx.NewId())
                     holidCheck_2 = wx.CheckBox(
@@ -838,7 +850,6 @@ class schedulerDialog(wx.Dialog):
                         self,
                         self.ctrls[2],
                         choices = self.text.serial_num,
-                        size = ((-1, 95)),
                     )
                     dateSizer.Add(serialCtrl, 0, wx.ALIGN_CENTER | wx.LEFT, 10)
                     if self.plugin.first_day:
@@ -851,7 +862,6 @@ class schedulerDialog(wx.Dialog):
                         self,
                         self.ctrls[3],
                         choices = choices,
-                        size = ((-1, 110)),
                     )
                     dateSizer.Add(weekdayCtrl, 0, wx.ALIGN_CENTER | wx.LEFT, 10)
                     dateSizer.Add(
@@ -868,7 +878,6 @@ class schedulerDialog(wx.Dialog):
                         self,
                         self.ctrls[4],
                         choices = list(month_name)[1:7],
-                        size = ((-1, 95)),
                     )
                     dateSizer.Add(monthsCtrl_1, 0, wx.ALIGN_CENTER | wx.LEFT, 10)
                     self.ctrls.append(wx.NewId())
@@ -876,7 +885,6 @@ class schedulerDialog(wx.Dialog):
                         self,
                         self.ctrls[5],
                         choices = list(month_name)[7:],
-                        size = ((-1, 95)),
                     )
                     dateSizer.Add(monthsCtrl_2, 0, wx.ALIGN_CENTER | wx.LEFT, -1)
                     self.ctrls.append(wx.NewId())
@@ -934,7 +942,6 @@ class schedulerDialog(wx.Dialog):
                         self,
                         self.ctrls[2],
                         choices = [str(i) + '.' for i in range(1, 9)],
-                        size = ((40, 125)),
                     )
                     dateSizer.Add(q_1_Ctrl, 0, wx.LEFT, 5)
                     self.ctrls.append(wx.NewId())
@@ -942,7 +949,6 @@ class schedulerDialog(wx.Dialog):
                         self,
                         self.ctrls[3],
                         choices = [str(i) + '.' for i in range(9, 17)],
-                        size = ((46, 125)),
                     )
                     dateSizer.Add(q_2_Ctrl, 0, wx.LEFT, -1)
                     self.ctrls.append(wx.NewId())
@@ -950,7 +956,6 @@ class schedulerDialog(wx.Dialog):
                         self,
                         self.ctrls[4],
                         choices = [str(i) + '.' for i in range(17, 25)],
-                        size = ((46, 125)),
                     )
                     dateSizer.Add(q_3_Ctrl, 0, wx.LEFT, -1)
                     self.ctrls.append(wx.NewId())
@@ -958,7 +963,6 @@ class schedulerDialog(wx.Dialog):
                         self,
                         self.ctrls[5],
                         choices = [str(i) + '.' for i in range(25, 32)],
-                        size = ((46, 125)),
                     )
                     dateSizer.Add(q_4_Ctrl, 0, wx.LEFT, -1)
                     dateSizer.Add((-1, 1), 1, wx.EXPAND)
@@ -967,7 +971,6 @@ class schedulerDialog(wx.Dialog):
                         self,
                         self.ctrls[6],
                         choices = list(month_name)[1:7],
-                        size = ((-1, 95)),
                     )
                     dateSizer.Add(monthsCtrl_1, 0, wx.ALIGN_CENTER | wx.LEFT, 10)
                     self.ctrls.append(wx.NewId())
@@ -975,7 +978,6 @@ class schedulerDialog(wx.Dialog):
                         self,
                         self.ctrls[7],
                         choices = list(month_name)[7:],
-                        size = ((-1, 95)),
                     )
                     dateSizer.Add(monthsCtrl_2, 0, wx.ALIGN_CENTER | wx.LEFT, -1)
                     dateSizer.Add((5, 1), 0)
@@ -1120,21 +1122,21 @@ class schedulerDialog(wx.Dialog):
                     )
                     bottomSizer.Add(unitCtrl, 0, wx.LEFT, 8)
                     dynamicSizer.Add(bottomSizer, 0, wx.EXPAND|wx.TOP, 16)
-                    dynamicSizer.Layout()
+                    self.Fit()
+
                 else:
                     numCtrl = wx.FindWindowById(self.ctrls[3])
                     unitCtrl = wx.FindWindowById(self.ctrls[4])
                 if data:
-                    numCtrl.SetValue(str(data[3]))
+                    numCtrl.SetValue(data[3])
                     unitCtrl.SetSelection(data[4])
             elif flag:
-                dynamicSizer.Layout()
+                self.Fit()
             if type == 6:
                 if stEvLbl:
                     stEvLbl.Show(False)
                     timeCtrl.Show(False)
                     spinBtn.Show(False)
-            return dynamicSizer.GetMinSize()[0]
 
 
         def Diff():
@@ -1513,13 +1515,9 @@ class schedulerDialog(wx.Dialog):
             next = next[:19] if next else self.plugin.text.none
             self.plugin.updateLogFile(self.text.testRun % (data[1], next))
 
-        dynamicSizer = wx.BoxSizer(wx.VERTICAL)
-        wDynamic = fillDynamicSizer(3)
         fillDynamicSizer(-1)
-        self.SetSize(wx.Size(wDynamic + 37, 662))
-        grid = self.grid = CheckListCtrl(self, text, wDynamic + 20)
-        sizer = wx.BoxSizer(wx.VERTICAL)
-        sizer.Add(grid, 0, wx.ALL, 5)
+        grid = self.grid = CheckListCtrl(self, text,-1)
+        sizer.Add(grid, 0, wx.ALL | wx.EXPAND, 5)
         prefixLabel = wx.StaticText(self, -1, self.text.evtPrefix)
         prefixCtrl = wx.TextCtrl(self, -1, "", size = (150,-1))
         startLabel = wx.StaticText(self, -1, self.text.startSuffix)
@@ -1573,11 +1571,6 @@ class schedulerDialog(wx.Dialog):
         nameSizer.Add(type_label)
         nameSizer.Add(schedulerName, 0, wx.EXPAND)
         nameSizer.Add(typeChoice)
-        typeSizer = wx.StaticBoxSizer(
-            wx.StaticBox(self, -1, ""),
-            wx.VERTICAL
-        )
-        dynamicSizer.SetMinSize((-1, 256))
         typeSizer.Add(nameSizer, 0, wx.EXPAND | wx.LEFT | wx.RIGHT | wx.BOTTOM, 5)
         typeSizer.Add(dynamicSizer, 0, wx.EXPAND | wx.TOP | wx.LEFT | wx.RIGHT, 5)
         sizer.Add(typeSizer, 0, wx.EXPAND | wx.LEFT | wx.RIGHT, 5)
@@ -1616,6 +1609,7 @@ class schedulerDialog(wx.Dialog):
             self.SetPosition(ConfigData.pos)
         else:
             self.Center()
+        self.Fit()
         self.Show(True)
 
 
@@ -2672,6 +2666,8 @@ class SchedulGhost(eg.PluginBase):
         self.updateLogFile(self.text.eggStart % (args[1], args[2], val))
         val =  int(val[6:]) + 60 * int(val[3:5]) + 3600 * int(val[:2])
         now = mktime(localtime())
+        while now in self.eggTimers:
+            now += .01
         self.eggTimers[now] = args
         eg.scheduler.AddShortTask(val, self.SchedulGhost_EggFunction, now)
 

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of EventGhost.
-# Copyright © 2005-2016 EventGhost Project <http://www.eventghost.org/>
+# Copyright © 2005-2020 EventGhost Project <http://www.eventghost.net/>
 #
 # EventGhost is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free
@@ -128,6 +128,9 @@ class Document(object):
             return self.Save()
         else:
             return wx.ID_NO
+
+    def IsDirty(self):
+        return self.isDirty
 
     @eg.LogItWithReturn
     def Close(self):
@@ -474,11 +477,24 @@ class Document(object):
     @eg.LogItWithReturn
     def ShowFrame(self):
         if self.reentrantLock.acquire(False):
-            if self.frame is None:
-                self.frame = eg.mainFrame = eg.MainFrame(self)
-                self.frame.Show()
+            import threading
+
+            event = threading.Event()
+
+            def do():
+                if self.frame is None:
+                    self.frame = eg.mainFrame = eg.MainFrame(self)
+                    self.frame.Show()
+                else:
+                    self.frame.Raise()
+                event.set()
+
+            if not threading.current_thread() == eg.mainThread:
+                wx.CallAfter(do)
+                event.wait()
             else:
-                self.frame.Iconize(False)
+                do()
+
             self.reentrantLock.release()
 
     def StartSession(self, filePath):

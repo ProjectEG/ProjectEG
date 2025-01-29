@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of EventGhost.
-# Copyright © 2005-2016 EventGhost Project <http://www.eventghost.org/>
+# Copyright © 2005-2020 EventGhost Project <http://www.eventghost.net/>
 #
 # EventGhost is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free
@@ -108,7 +108,6 @@ class Paste(UndoHandlerBase):
                 if pos + 1 == len(before.parent.childs):
                     pos = -1
             newNode = childCls(selection, childXmlNode)
-            newNode.guid = eg.GUID.NewId(newNode)
             newNode.RestoreState()
             selection.AddChild(newNode, pos)
             self.items.append(eg.TreePosition(newNode))

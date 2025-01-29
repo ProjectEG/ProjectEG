@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of EventGhost.
-# Copyright © 2005-2016 EventGhost Project <http://www.eventghost.org/>
+# Copyright © 2005-2020 EventGhost Project <http://www.eventghost.net/>
 #
 # EventGhost is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free
@@ -54,7 +54,19 @@ class GUIDBase(object):
         return self.target
 
 
+class GuidException(Exception):
+
+    def __init__(self, guid):
+        self.guid = guid
+
+    def __str__(self):
+        return 'No GUID %r exists' % self.guid
+
+
 class GUID(object):
+
+    GuidException = GuidException
+
     def __init__(self):
         self.guidObjects = {}
 
@@ -64,14 +76,22 @@ class GUID(object):
         return guid
 
     def AddId(self, target, guid):
-        guid = GUIDBase(target, guid)
-        self.guidObjects[guid.guid] = guid
-        return guid
+        if guid in self.guidObjects:
+            self.guidObjects[guid].target = target
+            return self.guidObjects[guid]
+        else:
+            guid = GUIDBase(target, guid)
+            self.guidObjects[str(guid)] = guid
+            return guid
 
     def __call__(self, guid):
         if guid in self.guidObjects:
             return self.guidObjects[guid]
         try:
             return self.guidObjects[guid.guid]
+        except AttributeError:
+            guid = self.AddId(None, guid)
+            return guid
         except KeyError:
-            raise AttributeError('%r has no attribute %r' % (self, guid))
+            raise self.GuidException(guid)
+

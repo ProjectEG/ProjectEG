@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of EventGhost.
-# Copyright © 2005-2016 EventGhost Project <http://www.eventghost.org/>
+# Copyright © 2005-2020 EventGhost Project <http://www.eventghost.net/>
 #
 # EventGhost is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free
@@ -22,6 +22,7 @@ from os.path import join
 
 # Local imports
 import eg
+from eg.WinApi.Utils import BringHwndToFront
 
 ID_SHOW = wx.NewId()
 ID_HIDE = wx.NewId()
@@ -72,6 +73,13 @@ class TaskBarIcon(wx.TaskBarIcon):
             eg.app.Exit(event)
         else:
             eg.mainFrame.Iconize(False)
+            eg.mainFrame.Raise()
+            for dialog in eg.mainFrame.openDialogs:
+                dialog.Iconize(False)
+                BringHwndToFront(dialog.GetHandle())
+                dialog.Raise()
+                dialog.RequestUserAttention()
+
             eg.mainFrame.RequestUserAttention()
 
     def OnCmdHide(self, dummyEvent):
@@ -81,6 +89,7 @@ class TaskBarIcon(wx.TaskBarIcon):
     def OnCmdShow(self, dummyEvent=None):
         if eg.mainFrame is not None:
             eg.mainFrame.Iconize(False)
+            eg.mainFrame.Raise()
         else:
             eg.document.ShowFrame()
 

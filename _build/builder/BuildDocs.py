@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of EventGhost.
-# Copyright © 2005-2016 EventGhost Project <http://www.eventghost.org/>
+# Copyright © 2005-2020 EventGhost Project <http://www.eventghost.net/>
 #
 # EventGhost is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free
@@ -26,11 +26,6 @@ from os.path import join
 # Local imports
 import builder
 from builder.Utils import EncodePath, GetHtmlHelpCompilerPath, StartProcess
-
-import eg
-from eg.Utils import GetFirstParagraph
-
-DOCS_SOURCE_DIR = ""
 
 GUI_CLASSES = [
     "SpinIntCtrl",
@@ -57,12 +52,11 @@ MAIN_CLASSES = [
     "-ControlProviderMixin",
 ]
 
+
 class BuildChmDocs(builder.Task):
     description = "Build CHM docs"
 
     def Setup(self):
-        global DOCS_SOURCE_DIR
-        DOCS_SOURCE_DIR = self.buildSetup.docsDir
         if self.buildSetup.showGui:
             if os.path.exists(
                 join(self.buildSetup.sourceDir, "EventGhost.chm")
@@ -73,26 +67,7 @@ class BuildChmDocs(builder.Task):
 
     def DoTask(self):
         tmpDir = join(self.buildSetup.tmpDir, "chm")
-        Prepare()
-        #warnings.simplefilter('ignore', DeprecationWarning)
-        sphinx.cmd.build.main([
-            # '-q',  # be quiet
-            "-a",  # always write all output files
-            "-b", "htmlhelp",
-            "-E",  # Don’t use a saved environment (the structure
-                   # caching all cross-references),
-            "-N",  # Prevent colored output.
-            "-P",  # (Useful for debugging only.) Run the Python debugger,
-                   # pdb, if an unhandled exception occurs while building.
-            "-D", "release=%s" % self.buildSetup.appVersion,
-            "-D", "templates_path=[]",
-            "-d", EncodePath(join(self.buildSetup.tmpDir, ".doctree")),
-            '-v', '-v',  # verbosity, can be given up to three times
-            # write warnings and errors to file
-            # '-w', join('output', 'sphinx_log.txt'),
-            EncodePath(DOCS_SOURCE_DIR),
-            tmpDir,
-        ])
+        call_sphinx('htmlhelp', self.buildSetup, tmpDir)
 
         print "calling HTML Help Workshop compiler"
         htmlHelpCompilerPath = GetHtmlHelpCompilerPath()
@@ -112,25 +87,44 @@ class BuildHtmlDocs(builder.Task):
         if self.buildSetup.showGui:
             self.activated = False
         else:
-            self.activated = bool(self.buildSetup.args.sync)
+            self.activated = self.buildSetup.args.docs and \
+                             bool(self.buildSetup.args.websiteUrl)
 
     def DoTask(self):
-        Prepare()
-        sphinx.build_main([
-            None,
-            "-a",
-            "-b", "html",
-            "-E",
-            "-N",
-            "-P",
-            "-D", "release=%s" % self.buildSetup.appVersion,
-            "-d", join(self.buildSetup.tmpDir, ".doctree"),
-            DOCS_SOURCE_DIR,
-            join(self.buildSetup.websiteDir, "docs"),
-        ])
+        call_sphinx('html', self.buildSetup, join(self.buildSetup.websiteDir, "docs"))
 
 
-def BuildClsDocs(clsNames):
+def call_sphinx(builder, build_setup, dest_dir):
+    WritePluginList(join(build_setup.docsDir, "pluginlist.rst"))
+    Prepare(build_setup.docsDir)
+    sphinx.build_main(
+        [
+            "-D", "project=EventGhost",
+            "-D", "copyright=2005-2017 EventGhost Project",
+            # "-D", "templates_path=[]",
+            '-q',    # be quiet
+            # "-a",  # always write all output files
+            # "-E",  # Don’t use a saved environment (the structure
+                     # caching all cross-references),
+            # "-N",  # Prevent colored output.
+            # "-P",  # (Useful for debugging only.) Run the Python debugger,
+                     # pdb, if an unhandled exception occurs while building.
+            # '-v',  # verbosity, can be given up to three times
+            # '-v',
+            # write warnings and errors to file:
+            # '-w', join('output', 'sphinx_log_chm.txt'),
+            "-b", builder,
+            "-D", "version=%s" % build_setup.appVersion,
+            "-D", "release=%s" % build_setup.appVersion,
+            "-d", join(build_setup.tmpDir, ".doctree"),
+            build_setup.docsDir,
+            dest_dir,
+        ]
+    )
+
+
+def BuildClsDocs(clsNames, doc_src_dir):
+    import eg
     res = []
     for clsName in clsNames:
         if clsName.startswith("-"):
@@ -144,8 +138,10 @@ def BuildClsDocs(clsNames):
             res.append("\nclass :class:`%s`" % fullClsName)
             if cls.__doc__:
                 res.append("   %s" % GetFirstTextParagraph(cls.__doc__))
-        filepath = join(DOCS_SOURCE_DIR, "eg", "%s.rst" % fullClsName)
+        filepath = join(doc_src_dir, "eg", "%s.rst" % fullClsName)
         outfile = open(filepath, "wt")
+        outfile.write(".. This file is automatically created. Don't edit it!")
+        outfile.write("\n\n")
         outfile.write("=" * len(fullClsName) + "\n")
         outfile.write(fullClsName + "\n")
         outfile.write("=" * len(fullClsName) + "\n")
@@ -158,6 +154,7 @@ def BuildClsDocs(clsNames):
         outfile.write("\n")
     return "\n".join(res)
 
+
 def GetFirstTextParagraph(text):
     res = []
     for line in text.lstrip().splitlines():
@@ -167,20 +164,22 @@ def GetFirstTextParagraph(text):
         res.append(line)
     return " ".join(res)
 
-def Prepare():
-    WritePluginList(join(DOCS_SOURCE_DIR, "pluginlist.rst"))
 
-    filepath = join(DOCS_SOURCE_DIR, "eg", "classes.txt")
+def Prepare(doc_src_dir):
+    filepath = join(doc_src_dir, "eg", "classes.txt")
     outfile = open(filepath, "wt")
-    outfile.write(BuildClsDocs(MAIN_CLASSES))
+    outfile.write(BuildClsDocs(MAIN_CLASSES, doc_src_dir) + '\n')
     outfile.close()
 
-    filepath = join(DOCS_SOURCE_DIR, "eg", "gui_classes.txt")
+    filepath = join(doc_src_dir, "eg", "gui_classes.txt")
     outfile = open(filepath, "wt")
-    outfile.write(BuildClsDocs(GUI_CLASSES))
+    outfile.write(BuildClsDocs(GUI_CLASSES, doc_src_dir) + '\n')
     outfile.close()
+
 
 def WritePluginList(filepath):
+    import eg
+    from eg.Utils import GetFirstParagraph
     kindList = [
         ("core", "Essential (always loaded)"),
         ("remote", "Remote Receiver"),
@@ -209,7 +208,7 @@ def WritePluginList(filepath):
     outfile.write("%s:\n\n" % eg.Version.base)
     for kind, kindDesciption in kindList:
         outfile.write("%s\n" % kindDesciption)
-        outfile.write(79 * "-" + "\n\n")
+        outfile.write(len(kindDesciption) * "-" + "\n\n")
         groups[kind].sort(key=lambda x: x.name)
         for info in groups[kind]:
             description = GetFirstParagraph(info.description)
@@ -232,4 +231,5 @@ def WritePluginList(filepath):
                     ".. _%s Plugin: %s\n\n" %
                     (info.name, info.url)
                 )
+    outfile.write('\n')
     outfile.close()

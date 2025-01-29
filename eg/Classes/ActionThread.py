@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of EventGhost.
-# Copyright © 2005-2016 EventGhost Project <http://www.eventghost.org/>
+# Copyright © 2005-2020 EventGhost Project <http://www.eventghost.net/>
 #
 # EventGhost is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free
@@ -20,6 +20,7 @@ from time import clock
 
 # Local imports
 import eg
+from eg.WinApi import User
 
 EVENT_ICON_INDEX = eg.EventItem.icon.index
 
@@ -102,6 +103,20 @@ class ActionThread(eg.ThreadWorker):
                 print "   -", pluginInfo.name
             print "If you want to use them, please add the missing plugins."
 
+        payload = dict(
+            IsLocalAdmin=User.IsLocalAdmin(),
+            IsDomainLogin=User.IsDomainLogin()
+        )
+
+        if payload['IsDomainLogin']:
+            payload['IsDomainAdmin'] = User.IsDomainAdmin()
+
+        event = eg.EventGhostEvent(
+            prefix='Windows',
+            suffix='User.' + User.Name(),
+            payload=payload
+        )
+        event.Execute()
         eg.programCounter = (eg.document.autostartMacro, None)
         eg.RunProgram()
 

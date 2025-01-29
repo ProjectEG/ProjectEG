@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of EventGhost.
-# Copyright © 2005-2016 EventGhost Project <http://www.eventghost.org/>
+# Copyright © 2005-2020 EventGhost Project <http://www.eventghost.net/>
 #
 # EventGhost is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free
@@ -236,7 +236,9 @@ def PilToBitmap(pil):
 # setup some commonly used icons
 INFO_ICON = PathIcon(join(IMAGES_PATH, "info.png"))
 ERROR_ICON = PathIcon(join(IMAGES_PATH, "error.png"))
+DEBUG_ICON = PathIcon(join(IMAGES_PATH, "debug.png"))
 NOTICE_ICON = PathIcon(join(IMAGES_PATH, "notice.png"))
+WARNING_ICON = PathIcon(join(IMAGES_PATH, "warning.png"))
 FOLDER_ICON = PathIcon(join(IMAGES_PATH, "folder.png"))
 DISABLED_ICON = PathIcon(join(IMAGES_PATH, "disabled.png"))
 PLUGIN_ICON = PathIcon(join(IMAGES_PATH, "plugin.png"))

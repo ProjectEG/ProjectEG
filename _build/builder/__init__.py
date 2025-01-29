@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of EventGhost.
-# Copyright © 2005-2016 EventGhost Project <http://www.eventghost.org/>
+# Copyright © 2005-2020 EventGhost Project <http://www.eventghost.net/>
 #
 # EventGhost is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free
@@ -104,7 +104,7 @@ class Builder(object):
             self.args.sync
         )
         if os.environ.get(
-                "APPVEYOR_REPO_COMMIT_MESSAGE", ""
+            "APPVEYOR_REPO_COMMIT_MESSAGE", ""
         ).upper().startswith("VERBOSE:"):
             self.args.verbose = True
 
@@ -188,6 +188,18 @@ class Builder(object):
             help="build and synchronize website",
         )
         parser.add_argument(
+            "-d", "--docs",
+            action="store_true",
+            help="build and synchronize usr and dev docs",
+        )
+        parser.add_argument(
+            "-u", "--url",
+            dest="websiteUrl",
+            default='',
+            type=str,
+            help="sftp url for doc synchronizing",
+        )
+        parser.add_argument(
             "-vv", "--verbose",
             action="store_true",
             help="give a more verbose output",
@@ -211,5 +223,4 @@ class Builder(object):
             import Gui
             Gui.Main(self)
         else:
-            thread = threading.Thread(target=builder.Tasks.Main, args=[self])
-            thread.start()
+            builder.Tasks.Main(self)
