@@ -22,7 +22,7 @@ matrix:
 cache:
   # Invalidate cache if .appveyor.yml has changed
   - C:\stackless27 -> .appveyor.yml
-  
+
   # Manually clear cache:
   # from agithub.AppVeyor import AppVeyor
   # ci = AppVeyor(<your appveyor API token>)
@@ -69,7 +69,7 @@ install:
         PySl $cmmd
         "    Done."
       }
-      
+
       " "
       "=============== prepare EventGhost build environment ==============="
       If (-not (Test-Path $PythonFolder))
@@ -148,8 +148,8 @@ install:
       } Else {
         "--- WIP ---"
         # $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
-        PySl "_build\Build.py --build --package"
-        Execute ".\EventGhost.exe -install"
+        "$PythonFolder\python.exe" _build\Build.py --build --package --verbose
+        ".\EventGhost.exe" -install
       }
       $Env:SetupExe = gci -recurse -filter "_build\output\*Setup.exe" -name
 
@@ -202,6 +202,8 @@ artifacts:
     name: $(SetupExe)
   - path: _build\output\Build.log
     name: Build.log
+  - path: _build\output\sphinx_log_chm.txt
+    name: sphinx_log_chm.txt
   - path: _build\output\CHANGELOG.md
     name: CHANGELOG.md
   - path: _build\output\CHANGELOG_THIS_RELEASE.md
