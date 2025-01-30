@@ -101,6 +101,8 @@ def call_sphinx(builder, build_setup, dest_dir):
         [
             "-D", "project=EventGhost",
             "-D", "copyright=2005-2017 EventGhost Project",
+            "-j", "auto",  # build in parallel with N processes where 'possible
+                           # (special value "auto" will set N to cpu-count
             # "-D", "templates_path=[]",
             '-q',    # be quiet
             # "-a",  # always write all output files
