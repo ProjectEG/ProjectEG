@@ -202,8 +202,6 @@ artifacts:
     name: $(SetupExe)
   - path: _build\output\Build.log
     name: Build.log
-  - path: _build\output\sphinx_log_chm.txt
-    name: sphinx_log_chm.txt
   - path: _build\output\CHANGELOG.md
     name: CHANGELOG.md
   - path: _build\output\CHANGELOG_THIS_RELEASE.md
