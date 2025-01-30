@@ -97,7 +97,7 @@ class BuildHtmlDocs(builder.Task):
 def call_sphinx(builder, build_setup, dest_dir):
     WritePluginList(join(build_setup.docsDir, "pluginlist.rst"))
     Prepare(build_setup.docsDir)
-    sphinx.build_main(
+    sphinx.cmd.build.main(
         [
             "-D", "project=EventGhost",
             "-D", "copyright=2005-2017 EventGhost Project",
