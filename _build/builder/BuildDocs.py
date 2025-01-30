@@ -103,10 +103,6 @@ def call_sphinx(builder, build_setup, dest_dir):
             action="ignore",
             category=FutureWarning,
         )
-        warnings.filterwarnings(
-            action="ignore",
-            category=Warning,
-        )
         sphinx.cmd.build.main(
             [
                 "-D", "project=EventGhost",
@@ -114,7 +110,8 @@ def call_sphinx(builder, build_setup, dest_dir):
                 "-j", "auto",  # build in parallel with N processes where 'possible
                                # (special value "auto" will set N to cpu-count
                 # "-D", "templates_path=[]",
-                '-q',    # be quiet
+                #'-q',    # no output on stdout, just warnings on stderr
+                '-Q',    # no output at all, not even warnings
                 # "-a",  # always write all output files
                 # "-E",  # Don’t use a saved environment (the structure
                          # caching all cross-references),
