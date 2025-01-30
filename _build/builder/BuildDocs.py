@@ -103,6 +103,10 @@ def call_sphinx(builder, build_setup, dest_dir):
             action="ignore",
             category=FutureWarning,
         )
+        warnings.filterwarnings(
+            action="ignore",
+            category=Warning,
+        )
         sphinx.cmd.build.main(
             [
                 "-D", "project=EventGhost",
