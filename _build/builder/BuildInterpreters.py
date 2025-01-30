@@ -60,7 +60,11 @@ class BuildInterpreters(builder.Task):
             script_args = ["py2exe"],
             options=dict(
                 build=dict(build_base=join(tmpDir, "build")),
-                py2exe=dict(compressed=0, dist_dir=join(tmpDir, "dist"))
+                py2exe=dict(
+                    compressed=0,
+                    dist_dir=join(tmpDir, "dist"),
+                    dll_excludes=["msvcp90.dll"]
+                )
             ),
             # it is important, that the zipfile argument does match the one
             # from the main installer.

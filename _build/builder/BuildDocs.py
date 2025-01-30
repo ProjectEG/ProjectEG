@@ -110,7 +110,7 @@ def call_sphinx(builder, build_setup, dest_dir):
             # "-P",  # (Useful for debugging only.) Run the Python debugger,
                      # pdb, if an unhandled exception occurs while building.
             # '-v',  # verbosity, can be given up to three times
-            '-v',
+            # '-v',
             # write warnings and errors to file:
             '-w', join('output', 'sphinx_log_chm.txt'),
             "-b", builder,
