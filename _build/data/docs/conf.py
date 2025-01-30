@@ -15,7 +15,7 @@
 import os
 import sys
 
-suppress_warnings = ['sphinx.util.nodes']
+suppress_warnings = ['docutils']
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
