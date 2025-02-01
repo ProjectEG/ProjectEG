@@ -220,8 +220,8 @@ Root: HKCR; Subkey: "EventGhost Plugin\shell\open\command"; ValueType: string; V
 
 [Run]
 Filename: "{tmp}\vcredist_x86.exe"; \
-  StatusMsg: "Microsoft Visual C++ 2008 Service Pack 1 Redistributable Package"; \
-  Parameters: "/quiet"; Flags: waituntilterminated
+  StatusMsg: "installing Microsoft Visual C++ 2008 Service Pack 1 Redistributable Package"; \
+  Parameters: "/q"; Flags: waituntilterminated
 ; EG -install needs to be called with admin rights to install the COM-server
 Filename: "{app}\EventGhost.exe"; Parameters: "-install"
 Filename: "{app}\EventGhost.exe"; Flags: postinstall nowait skipifsilent
