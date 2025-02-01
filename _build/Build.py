@@ -133,6 +133,10 @@ class MyBuilder(builder.Builder):
             join(self.tmpDir, "VersionInfo.py"),
             destDir="eg\\Classes"
         )
+        inno.AddFile(
+            join(self.dataDir, "vcredist_x86.exe"),
+            dontcopy=True
+        )
 
         inno.ExecuteInnoSetup()
 

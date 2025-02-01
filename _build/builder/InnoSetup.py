@@ -42,7 +42,7 @@ class InnoInstaller(object):
             self.innoSections[section] = []
         self.innoSections[section].append(EncodePath(line))
 
-    def AddFile(self, source, destDir="", destName=None, ignoreversion=True, prefix="{app}"):
+    def AddFile(self, source, destDir="", destName=None, ignoreversion=True, prefix="{app}", dontcopy=False):
         """
         Adds a file to the [Files] section.
         """
@@ -53,6 +53,8 @@ class InnoInstaller(object):
             line += '; DestName: "%s"' % destName
         if ignoreversion:
             line += '; Flags: ignoreversion'
+        if dontcopy:
+            line += '; Flags: dontcopy'
         self.Add("Files", line)
 
     def ExecuteInnoSetup(self):
