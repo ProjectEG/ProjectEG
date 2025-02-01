@@ -1,6 +1,9 @@
 # In AppVeyor's web config add an environment variable named GITHUB_TOKEN.
 # Set it to a token you've created on GitHub.
-# To draft a release on GitHub with AppVeyor, create a tag on master.
+# To draft a release on GitHub with AppVeyor, create a tag in the 
+# form "deploy_VERSION" where VERSION must be a valid version string (without
+# leading 'v') (for example: deploy_0.5.0-rc7)
+# The "deploy_VERSION" tag will be deleted and a new release "vVERSION" created.
 
 version: '{build}-{branch}'
 
@@ -133,17 +136,11 @@ install:
       " "
       "=============== start the EventGhost build ==============="
       " "
-      "  APPVEYOR_REPO_TAG: " + $Env:APPVEYOR_REPO_TAG
-      "  APPVEYOR_REPO_TAG_NAME: " + $Env:APPVEYOR_REPO_TAG
       If ($Env:APPVEYOR_REPO_TAG.tolower() -eq "true" -and
         $Env:APPVEYOR_REPO_TAG_NAME.tolower().startswith("deploy"))
       {
         "--- DEPLOY ---"
-        # to do a release, create a tag in the form "Deploy_VERSION"
-        # VERSION must be a valid version string (without leading 'v')
-        # this tag will be deleted and a new release "vVERSION" created.
-        $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
-        git checkout -q master
+        git checkout -b master
         "   APPVEYOR_REPO_TAG_NAME: " + $Env:APPVEYOR_REPO_TAG_NAME
         $release = $Env:APPVEYOR_REPO_TAG_NAME.split("_", 2)[1]
         "   release: " + $release
