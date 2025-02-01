@@ -143,7 +143,7 @@ install:
         $release = $Env:APPVEYOR_REPO_TAG_NAME.split("_", 2)[1]
         "   release: " + $release
         $url = if($Env:SFTP_URL){' --docs --url "' + $env:SFTP_URL + '"'} else {''}
-        PySl "_build\Build.py --build --package --release --version $release $url"
+        c:\stackless27\python.exe "_build\Build.py" --build --package --release --version $release $url
       } Else {
         "--- WIP ---"
         # $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
