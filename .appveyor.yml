@@ -11,9 +11,6 @@ image: Visual Studio 2015
 
 #init:
 #  # Enable Remotedesktop and pause the build execution
-#  - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
-
-clone_depth: 2
 
 environment:
   PYTHON: 'C:\Stackless27'
@@ -140,7 +137,7 @@ install:
         $Env:APPVEYOR_REPO_TAG_NAME.tolower().startswith("deploy"))
       {
         "--- DEPLOY ---"
-        git checkout -b master
+        git checkout master
         "   APPVEYOR_REPO_TAG_NAME: " + $Env:APPVEYOR_REPO_TAG_NAME
         $release = $Env:APPVEYOR_REPO_TAG_NAME.split("_", 2)[1]
         "   release: " + $release
