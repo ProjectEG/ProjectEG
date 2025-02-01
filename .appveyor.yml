@@ -1,7 +1,7 @@
 # In AppVeyor's web config add an environment variable named GITHUB_TOKEN.
 # Set it to a token you've created on GitHub.
 #
-# To deploy a release with AppVeyor, create a tag/release on GitHub in the 
+# To deploy a release with AppVeyor, create a tag/release on GitHub in the
 # form "deploy_VERSION" where VERSION must be a valid version string (without
 # leading 'v') (for example: deploy_0.5.0-rc7)
 # The "deploy_VERSION" tag will be deleted and a new release "vVERSION" created.
@@ -137,11 +137,9 @@ install:
       If ($Env:APPVEYOR_REPO_TAG.tolower() -eq "true" -and
         $Env:APPVEYOR_REPO_TAG_NAME.tolower().startswith("deploy"))
       {
-        "--- DEPLOY ---"
-        git checkout -q master
-        "   tag name: " + $Env:APPVEYOR_REPO_TAG_NAME
         $release = $Env:APPVEYOR_REPO_TAG_NAME.split("_", 2)[1]
-        "   release: " + $release
+        "--- DEPLOY " + $release + " ---"
+        " "
         $url = if($Env:SFTP_URL){' --docs --url "' + $env:SFTP_URL + '"'} else {''}
         c:\stackless27\python.exe "_build\Build.py" --build --package --release --version $release $url
       } Else {
