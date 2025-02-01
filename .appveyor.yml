@@ -34,7 +34,7 @@ install:
   # - cinst html-help-workshop
 
   # Microsoft Visual C++ Redistributable 2008 (version min: 30729.6161)
-  - cinst vcredist2008 --version=9.0.30729.6161
+  - cinst vcredist2008 --version=9.0.30729.6161 --ignore-checksums
 
   #- ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
   - ps: |
