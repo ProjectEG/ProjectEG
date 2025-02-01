@@ -47,8 +47,8 @@ install:
       $PythonDLL = $PythonFolder + "\python27.dll"
       $InstallersFolder = $Env:APPVEYOR_BUILD_FOLDER + "\_build\installers\"
 
-      vcinst = $Env:APPVEYOR_BUILD_FOLDER + "\_build\data\vcedist_x86.exe"
-      $vcinst "/q"
+      $vcinst = $Env:APPVEYOR_BUILD_FOLDER + "\_build\data\vcedist_x86.exe /q"
+      $vcinst
 
       Remove-Item $PythonWindowsDLL
       New-Item $InstallersFolder -type directory | Out-Null
