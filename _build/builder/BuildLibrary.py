@@ -160,7 +160,7 @@ class Target:
         self.company_name = buildSetup.companyName
         self.copyright = buildSetup.copyright
         self.dest_base = buildSetup.name
-        self.version = ".".join(v[0][:3])
+        self.version = ".".join(v[1][:3])
         self.script = join(buildSetup.sourceDir, buildSetup.mainScript)
 
 
