@@ -1,6 +1,7 @@
 # In AppVeyor's web config add an environment variable named GITHUB_TOKEN.
 # Set it to a token you've created on GitHub.
-# To draft a release on GitHub with AppVeyor, create a tag in the 
+#
+# To deploy a release with AppVeyor, create a tag/release on GitHub in the 
 # form "deploy_VERSION" where VERSION must be a valid version string (without
 # leading 'v') (for example: deploy_0.5.0-rc7)
 # The "deploy_VERSION" tag will be deleted and a new release "vVERSION" created.
