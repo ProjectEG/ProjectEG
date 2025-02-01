@@ -34,7 +34,7 @@ install:
   # - cinst html-help-workshop
 
   # Microsoft Visual C++ Redistributable 2008 (version min: 30729.6161)
-  - cinst vcredist2008 --version=9.0.30729.6161 --ignore-checksums
+  # - cinst vcredist2008 --version=9.0.30729.6161 --ignore-checksums
 
   #- ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
   - ps: |
@@ -46,6 +46,9 @@ install:
       $PythonWindowsDLL = $SysWOW + "\python27.dll"
       $PythonDLL = $PythonFolder + "\python27.dll"
       $InstallersFolder = $Env:APPVEYOR_BUILD_FOLDER + "\_build\installers\"
+
+      vcinst = $Env:APPVEYOR_BUILD_FOLDER + "\_build\data\vcedist_x86.exe"
+      $vcinst "/q"
 
       Remove-Item $PythonWindowsDLL
       New-Item $InstallersFolder -type directory | Out-Null
