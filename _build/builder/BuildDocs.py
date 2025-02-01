@@ -110,7 +110,7 @@ def call_sphinx(builder, build_setup, dest_dir):
                 "-j", "auto",  # build in parallel with N processes where 'possible
                                # (special value "auto" will set N to cpu-count
                 # "-D", "templates_path=[]",
-                #'-q',    # no output on stdout, just warnings on stderr
+                # '-q',    # no output on stdout, just warnings on stderr
                 '-Q',    # no output at all, not even warnings
                 # "-a",  # always write all output files
                 # "-E",  # Don’t use a saved environment (the structure
@@ -121,7 +121,7 @@ def call_sphinx(builder, build_setup, dest_dir):
                 # '-v',  # verbosity, can be given up to three times
                 # '-v',
                 # write warnings and errors to file:
-                '-w', join('output', 'sphinx_log_chm.txt'),
+                # '-w', join('output', 'sphinx_log_chm.txt'),
                 "-b", builder,
                 "-D", "version=%s" % build_setup.appVersion,
                 "-D", "release=%s" % build_setup.appVersion,

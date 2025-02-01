@@ -36,7 +36,7 @@ install:
   # Microsoft Visual C++ Redistributable 2008 (version min: 9.0.21022.8)
   # - cinst vcredist2008
 
-  # - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
+  #- ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
   - ps: |
       $Env:PATH = $Env:PATH -replace "python27", "stackless27"
       $PythonFolder = "c:\stackless27"
@@ -75,8 +75,8 @@ install:
       If (-not (Test-Path $PythonFolder))
       {
         " "
-        "--- Stackless 2.7.12150 x86"
-        $StacklessInstaller = $InstallersFolder + "python-2.7.12150-stackless.msi"
+        "--- Stackless 2.7.16150 x86"
+        $StacklessInstaller = $InstallersFolder + "python-2.7.16150-stackless.msi"
         $StacklessInstallDir = "TARGETDIR=" + $PythonFolder
         $StacklessURL = "http://www.stackless.com/binaries/python-2.7.16150-stackless.msi"
         Start-FileDownload $StacklessURL -Timeout 60000 -FileName $StacklessInstaller
@@ -86,7 +86,7 @@ install:
         " "
         "--- wxPython 3.0.2.0"
         $WXInstaller = $InstallersFolder + "wxPython3.0-win32-3.0.2.0-py27.exe"
-        $WXURL = "http://downloads.sourceforge.net/wxpython/wxPython3.0-win32-3.0.2.0-py27.exe"
+        $WXURL = "https://downloads.sourceforge.net/wxpython/wxPython3.0-win32-3.0.2.0-py27.exe"
         Start-FileDownload $WXURL -Timeout 60000 -FileName $WXInstaller
         "    Installing..."
         Execute "$WXInstaller /VERYSILENT /SUPPRESSMSGBOXES"
@@ -111,9 +111,7 @@ install:
         PipInstall "py2exe 0.6.9" "py2exe_py2==0.6.9"
         PipInstall "PyCrypto 2.6.1" "PyCrypto==2.6.1"
         PipInstall "comtypes 1.2.1" "comtypes==1.2.1"
-        # "https://github.com/enthought/comtypes/archive/1.2.1.zip"
         PipInstall "ctypeslib 0.5.8" "ctypeslib3==0.5.8"
-        # "svn+http://svn.python.org/projects/ctypes/trunk/ctypeslib/#ctypeslib=0.5.6"
         PipInstall "paramiko 2.12.0" "paramiko==2.12.0"
         PipInstall "pywin32 228" pywin32==228
       }
@@ -123,9 +121,9 @@ install:
       PySl "$PywinPostInstall -install -silent -quiet"
       "    Done."
       " "
-      "--- Inno Setup 6.4.0"
-      $InnoInstaller = $InstallersFolder + "innosetup-6.4.0.exe"
-      $InnoURL = "https://files.innosetup.nl/innosetup-6.4.0.exe"
+      "--- Inno Setup 5.6.1"
+      $InnoInstaller = $InstallersFolder + "innosetup-5.6.1-unicode.exe"
+      $InnoURL = "https://files.jrsoftware.org/is/5/innosetup-5.6.1-unicode.exe"
       Start-FileDownload $InnoURL -Timeout 60000 -FileName $InnoInstaller | ForEach-Object { Write-Host "    " + $_ }
       "    Installing..."
       Execute "$InnoInstaller /SP /VERYSILENT /SUPPRESSMSGBOXES /NORESTART /RESTARTAPPLICATIONS /NOICONS"
@@ -161,9 +159,7 @@ install:
 
       # Make sure the appveyor cache is only saved if our build was successfull
       If (-Not (Test-Path(".\EventGhost.exe"))) {
-        "Exe-File not found"
         $env:APPVEYOR_CACHE_SKIP_SAVE = "true"
-        Return -1
       }
 
       " "
@@ -180,16 +176,6 @@ build:
   # folder contains more than one project or solution file.
   # We don't really "build" (with a compiler), but Appveyor finds the
   # solution files in the extension sub-directories and complains.
-
-
-after_build:
-  If (-Not (Test-Path(".\EventGhost.exe")))
-  {
-    "Fehler"
-    Return -1
-  } Else {
-    "Erfolgreich"
-  }
 
 
 #after_test:
@@ -229,7 +215,7 @@ notifications:
   on_build_status_changed: false
 
 
-#on_finish:
+# on_finish:
 #  # Enable Remotedesktop and pause the build execution
 #  - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
 
