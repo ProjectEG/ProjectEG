@@ -1,3 +1,8 @@
+## [0.5.0-rc21](https://github.com/ProjectEG/ProjectEG/releases/tag/v0.5.0-rc21) (2025-02-01)
+
+Only minor changes in this release.
+
+
 ## [0.5.0-rc16](https://github.com/ProjectEG/ProjectEG/releases/tag/v0.5.0-rc16) (2025-02-01)
 
 Only minor changes in this release.
