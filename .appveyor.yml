@@ -137,8 +137,8 @@ install:
         $Env:APPVEYOR_REPO_TAG_NAME.tolower().startswith("deploy"))
       {
         "--- DEPLOY ---"
-        git checkout master
-        "   APPVEYOR_REPO_TAG_NAME: " + $Env:APPVEYOR_REPO_TAG_NAME
+        git checkout -q master
+        "   tag name: " + $Env:APPVEYOR_REPO_TAG_NAME
         $release = $Env:APPVEYOR_REPO_TAG_NAME.split("_", 2)[1]
         "   release: " + $release
         $url = if($Env:SFTP_URL){' --docs --url "' + $env:SFTP_URL + '"'} else {''}
